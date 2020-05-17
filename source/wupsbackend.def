@@ -1,0 +1,15 @@
+:NAME homebrew_wupsbackend
+
+:TEXT
+WUPSLoadPluginAsDataByPath
+WUPSLoadPluginAsDataByBuffer
+WUPSLoadPluginAsData
+WUPSLoadAndLinkByDataHandle
+WUPSDeletePluginContainer
+WUPSDeletePluginData
+WUPSGetPluginMetaInformation
+WUPSGetPluginMetaInformationByPath
+WUPSGetPluginMetaInformationByBuffer
+WUPSGetMetaInformation
+WUPSGetLoadedPlugins
+WUPSGetPluginDataForContainerHandles
