@@ -99,10 +99,10 @@ export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 .PHONY: all dist-bin dist-src dist install clean
 
 #---------------------------------------------------------------------------------
-all: lib/libwupsbackend.a
+all: lib/libwupsbackend.a share/libwupsbackend.ld
 
 dist-bin: all
-	@tar --exclude=*~ -cjf libwupsbackend-$(VERSION).tar.bz2 include lib
+	@tar --exclude=*~ -cjf libwupsbackend-$(VERSION).tar.bz2 include lib share
 
 dist-src:
 	@tar --exclude=*~ -cjf libwupsbackend-src-$(VERSION).tar.bz2 include source Makefile
@@ -115,9 +115,15 @@ install: dist-bin
 
 lib:
 	@[ -d $@ ] || mkdir -p $@
+    
+share:
+	@[ -d $@ ] || mkdir -p $@
 
 release:
 	@[ -d $@ ] || mkdir -p $@
+    
+share/libwupsbackend.ld : lib/libwupsbackend.a | release
+	cp $(CURDIR)/release/*.ld $(CURDIR)/$@
 
 lib/libwupsbackend.a :$(SOURCES) $(INCLUDES) | lib release
 	@$(MAKE) BUILD=release OUTPUT=$(CURDIR)/$@ \
@@ -143,6 +149,12 @@ $(OUTPUT)	:	$(OFILES)
 
 $(OFILES_SRC)	: $(HFILES)
 
+#---------------------------------------------------------------------------------
+%.o: %.def
+	$(SILENTMSG) $(notdir $<)
+	$(SILENTCMD)rplimportgen $< $*.s $*.ld $(ERROR_FILTER)
+	$(SILENTCMD)$(CC) -x assembler-with-cpp $(ASFLAGS) -c $*.s -o $@ $(ERROR_FILTER)
+    
 #---------------------------------------------------------------------------------
 %_bin.h %.bin.o	:	%.bin
 #---------------------------------------------------------------------------------
