@@ -40,29 +40,29 @@ typedef struct __attribute__((__packed__)) plugin_information {
     size_t size;
 } plugin_information;
 
-int32_t WUPSLoadAndLinkByDataHandle(const plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size);
+extern int32_t WUPSLoadAndLinkByDataHandle(const plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size);
 
-int32_t WUPSDeletePluginContainer(const plugin_container_handle *handle_list, uint32_t handle_list_size);
+extern int32_t WUPSDeletePluginContainer(const plugin_container_handle *handle_list, uint32_t handle_list_size);
 
-int32_t WUPSDeletePluginData(const plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size);
+extern int32_t WUPSDeletePluginData(const plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size);
 
-int32_t WUPSLoadPluginAsData(GetPluginInformationInputType inputType, const char *path, char *buffer, size_t size, plugin_data_handle *out);
+extern int32_t WUPSLoadPluginAsData(GetPluginInformationInputType inputType, const char *path, char *buffer, size_t size, plugin_data_handle *out);
 
-int32_t WUPSLoadPluginAsDataByPath(plugin_data_handle *output, const char *path);
+extern int32_t WUPSLoadPluginAsDataByPath(plugin_data_handle *output, const char *path);
 
-int32_t WUPSLoadPluginAsDataByBuffer(plugin_data_handle *output, char *buffer, size_t size);
+extern int32_t WUPSLoadPluginAsDataByBuffer(plugin_data_handle *output, char *buffer, size_t size);
 
-int32_t WUPSGetPluginMetaInformation(GetPluginInformationInputType inputType, const char *path, char *buffer, size_t size, plugin_information *output);
+extern int32_t WUPSGetPluginMetaInformation(GetPluginInformationInputType inputType, const char *path, char *buffer, size_t size, plugin_information *output);
 
-int32_t WUPSGetPluginMetaInformationByPath(plugin_information *output, const char *path);
+extern int32_t WUPSGetPluginMetaInformationByPath(plugin_information *output, const char *path);
 
-int32_t WUPSGetPluginMetaInformationByBuffer(plugin_information *output, char *buffer, size_t size);
+extern int32_t WUPSGetPluginMetaInformationByBuffer(plugin_information *output, char *buffer, size_t size);
 
-int32_t WUPSGetPluginDataForContainerHandles(const plugin_container_handle *plugin_container_handle_list, const plugin_data_handle *plugin_data_list, uint32_t buffer_size);
+extern int32_t WUPSGetPluginDataForContainerHandles(const plugin_container_handle *plugin_container_handle_list, const plugin_data_handle *plugin_data_list, uint32_t buffer_size);
 
-int32_t WUPSGetMetaInformation(const plugin_container_handle *plugin_container_handle_list, plugin_information *plugin_information_list, uint32_t buffer_size);
+extern int32_t WUPSGetMetaInformation(const plugin_container_handle *plugin_container_handle_list, plugin_information *plugin_information_list, uint32_t buffer_size);
 
-int32_t WUPSGetLoadedPlugins(const plugin_container_handle *io_handles, uint32_t buffer_size, uint32_t *outSize);
+extern int32_t WUPSGetLoadedPlugins(const plugin_container_handle *io_handles, uint32_t buffer_size, uint32_t *outSize);
 
 #ifdef __cplusplus
 }
