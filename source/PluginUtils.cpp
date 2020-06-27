@@ -16,9 +16,8 @@
  ****************************************************************************/
 
 #include <cstring>
+
 #include "wups_backend/PluginUtils.h"
-#include "wups_backend/PluginMetaInformation.h"
-#include "wups_backend/PluginContainer.h"
 #include "imports.h"
 
 std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForBuffer(char *buffer, size_t size) {
@@ -90,26 +89,46 @@ std::optional<PluginContainer> PluginUtils::getPluginForBuffer(char *buffer, siz
 
 std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
     std::vector<PluginContainer> result;
-    plugin_container_handle handles[maxSize];
+    plugin_container_handle *handles = (plugin_container_handle *) malloc(maxSize * sizeof(plugin_container_handle));
+    if (!handles) {
+        return result;
+    }
     uint32_t realSize = 0;
 
     if (WUPSGetLoadedPlugins(handles, maxSize, &realSize) != 0) {
+        free(handles);
         // DEBUG_FUNCTION_LINE("Failed");
         return result;
     }
     if (realSize == 0) {
+        free(handles);
         // DEBUG_FUNCTION_LINE("realsize is 0");
         return result;
     }
 
-    plugin_data_handle dataHandles[realSize];
+    plugin_data_handle *dataHandles = (plugin_container_handle *) malloc(realSize * sizeof(plugin_container_handle));
+    if(!dataHandles){
+        free(handles);
+        return result;
+    }
+
     if (WUPSGetPluginDataForContainerHandles(handles, dataHandles, realSize) != 0) {
+        free(handles);
+        free(dataHandles);
         // DEBUG_FUNCTION_LINE("Failed to get plugin data");
         return result;
     }
 
-    plugin_information information[realSize];
+    plugin_information* information  = (plugin_information *) malloc(realSize * sizeof(plugin_information));
+    if(information == NULL){
+        free(handles);
+        free(dataHandles);
+        return result;
+    }
     if (WUPSGetMetaInformation(handles, information, realSize) != 0) {
+        free(handles);
+        free(dataHandles);
+        free(information);
         // DEBUG_FUNCTION_LINE("Failed to get meta information for handles");
         return result;
     }
@@ -125,6 +144,10 @@ std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
         PluginData pluginData((uint32_t) dataHandles[i]);
         result.push_back(PluginContainer(pluginData, metaInfo, handles[i]));
     }
+
+    free(handles);
+    free(dataHandles);
+    free(information);
 
     return result;
 }
