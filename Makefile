@@ -122,7 +122,7 @@ share:
 release:
 	@[ -d $@ ] || mkdir -p $@
     
-share/libwupsbackend.ld : lib/libwupsbackend.a | release
+share/libwupsbackend.ld : lib/libwupsbackend.a | share release
 	cp $(CURDIR)/release/*.ld $(CURDIR)/$@
 
 lib/libwupsbackend.a :$(SOURCES) $(INCLUDES) | lib release
