@@ -112,7 +112,7 @@ std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
         return result;
     }
 
-    plugin_data_handle *dataHandles = (plugin_container_handle *) malloc(realSize * sizeof(plugin_container_handle));
+    plugin_data_handle *dataHandles = (plugin_data_handle *) malloc(realSize * sizeof(plugin_data_handle));
     if(!dataHandles){
         free(handles);
         return result;
