@@ -62,7 +62,6 @@ std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForPath(cons
     return metaInfo;
 }
 
-
 std::optional<PluginContainer> PluginUtils::getPluginForPath(const std::string &path) {
     auto metaInfoOpt = PluginUtils::getMetaInformationForPath(path);
     if (!metaInfoOpt) {
@@ -118,7 +117,7 @@ std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
         return result;
     }
 
-    if (WUPSGetPluginDataForContainerHandles(handles, dataHandles, realSize) != 0) {
+    if (WUPSGetPluginDataForContainerHandles(handles, dataHandles, realSize) != ERROR_NONE) {
         free(handles);
         free(dataHandles);
         // DEBUG_FUNCTION_LINE("Failed to get plugin data");
@@ -126,7 +125,7 @@ std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
     }
 
     plugin_information* information  = (plugin_information *) malloc(realSize * sizeof(plugin_information));
-    if(information == NULL){
+    if(!information){
         free(handles);
         free(dataHandles);
         return result;
@@ -148,7 +147,7 @@ std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
                                        information[i].description,
                                        information[i].size);
         PluginData pluginData((uint32_t) dataHandles[i]);
-        result.push_back(PluginContainer(pluginData, metaInfo, handles[i]));
+        result.emplace_back(pluginData, metaInfo, handles[i]);
     }
 
     free(handles);
