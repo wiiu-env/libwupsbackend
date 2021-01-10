@@ -20,6 +20,12 @@
 #include "wups_backend/PluginUtils.h"
 #include "imports.h"
 
+#define ERROR_NONE      0
+#define ERROR_INVALID_SIZE      0xFFFFFFFF
+#define ERROR_INVALID_ARG       0xFFFFFFFE
+#define ERROR_FAILED_ALLOC      0xFFFFFFFD
+#define ERROR_FILE_NOT_FOUND    0xFFFFFFFC
+
 std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForBuffer(char *buffer, size_t size) {
     plugin_information info;
     memset(&info, 0, sizeof(info));
@@ -42,7 +48,7 @@ std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForBuffer(ch
 std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForPath(const std::string &path) {
     plugin_information info;
     memset(&info, 0, sizeof(info));
-    if (WUPSGetPluginMetaInformationByPath(&info, path.c_str()) != 0) {
+    if (WUPSGetPluginMetaInformationByPath(&info, path.c_str()) != ERROR_NONE) {
         // DEBUG_FUNCTION_LINE("Failed to load meta infos for %s\n", path.c_str());
         return std::nullopt;
     }
@@ -64,12 +70,12 @@ std::optional<PluginContainer> PluginUtils::getPluginForPath(const std::string &
     }
 
     plugin_data_handle dataHandle;
-    if (WUPSLoadPluginAsDataByPath(&dataHandle, path.c_str()) != 0) {
+    if (WUPSLoadPluginAsDataByPath(&dataHandle, path.c_str()) != ERROR_NONE) {
         // DEBUG_FUNCTION_LINE("Failed to load data");
         return std::nullopt;
     }
 
-    return PluginContainer(PluginData(dataHandle), metaInfoOpt.value(), 0);
+    return PluginContainer(PluginData(dataHandle), metaInfoOpt.value(), ERROR_NONE);
 }
 
 std::optional<PluginContainer> PluginUtils::getPluginForBuffer(char *buffer, size_t size) {
@@ -79,7 +85,7 @@ std::optional<PluginContainer> PluginUtils::getPluginForBuffer(char *buffer, siz
     }
 
     plugin_data_handle dataHandle;
-    if (WUPSLoadPluginAsDataByBuffer(&dataHandle, buffer, size) != 0) {
+    if (WUPSLoadPluginAsDataByBuffer(&dataHandle, buffer, size) != ERROR_NONE) {
         // DEBUG_FUNCTION_LINE("Failed to load data");
         return std::nullopt;
     }
@@ -95,7 +101,7 @@ std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
     }
     uint32_t realSize = 0;
 
-    if (WUPSGetLoadedPlugins(handles, maxSize, &realSize) != 0) {
+    if (WUPSGetLoadedPlugins(handles, maxSize, &realSize) != ERROR_NONE) {
         free(handles);
         // DEBUG_FUNCTION_LINE("Failed");
         return result;
@@ -125,7 +131,7 @@ std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
         free(dataHandles);
         return result;
     }
-    if (WUPSGetMetaInformation(handles, information, realSize) != 0) {
+    if (WUPSGetMetaInformation(handles, information, realSize) != ERROR_NONE) {
         free(handles);
         free(dataHandles);
         free(information);
