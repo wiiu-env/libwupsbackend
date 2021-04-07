@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2019,2020 Maschell
+ * Copyright (C) 2019-2021 Maschell
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,12 +16,14 @@
  ****************************************************************************/
 #pragma once
 
+#include <cstdint>
+
 class PluginData {
 
 public:
-    PluginData(uint32_t handle);
+    explicit PluginData(uint32_t handle);
 
-    uint32_t getHandle() const {
+    [[nodiscard]] uint32_t getHandle() const {
         return handle;
     }
 

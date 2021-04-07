@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2019,2020 Maschell
+ * Copyright (C) 2019-2021 Maschell
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,72 +23,80 @@
 
 class PluginMetaInformation {
 public:
-    const std::string getName() const {
+    [[nodiscard]] const std::string &getName() const {
         return name;
     }
 
-    const std::string getAuthor() const {
+    [[nodiscard]] const std::string &getAuthor() const {
         return this->author;
     }
 
-    const std::string getVersion() const {
+    [[nodiscard]] const std::string &getVersion() const {
         return this->version;
     }
 
-    const std::string getLicense() const {
+    [[nodiscard]] const std::string &getLicense() const {
         return this->license;
     }
 
-    const std::string getBuildTimestamp() const {
+    [[nodiscard]] const std::string &getBuildTimestamp() const {
         return this->buildtimestamp;
     }
 
-    const std::string getDescription() const {
+    [[nodiscard]] const std::string &getDescription() const {
         return this->description;
     }
 
-    const size_t getSize() const {
+    [[nodiscard]] const std::string &getId() const {
+        return this->description;
+    }
+
+    [[nodiscard]] size_t getSize() const {
         return this->size;
     }
 
-    PluginMetaInformation(std::string name,
-                          std::string author,
-                          std::string version,
-                          std::string license,
-                          std::string buildtimestamp,
-                          std::string description,
+    PluginMetaInformation(const std::string& name,
+                          const std::string& author,
+                          const std::string& version,
+                          const std::string& license,
+                          const std::string& buildtimestamp,
+                          const std::string& description,
+                          const std::string& id,
                           size_t size);
 
 private:
-    PluginMetaInformation() {
+    PluginMetaInformation() = default;
+
+    void setName(const std::string &name_) {
+        this->name = name_;
     }
 
-    void setName(const std::string &name) {
-        this->name = name;
+    void setAuthor(const std::string &author_) {
+        this->author = author_;
     }
 
-    void setAuthor(const std::string &author) {
-        this->author = author;
+    void setVersion(const std::string &version_) {
+        this->version = version_;
     }
 
-    void setVersion(const std::string &version) {
-        this->version = version;
+    void setLicense(const std::string &license_) {
+        this->license = license_;
     }
 
-    void setLicense(const std::string &license) {
-        this->license = license;
+    void setBuildTimestamp(const std::string &buildtimestamp_) {
+        this->buildtimestamp = buildtimestamp_;
     }
 
-    void setBuildTimestamp(const std::string &buildtimestamp) {
-        this->buildtimestamp = buildtimestamp;
+    void setDescription(const std::string &description_) {
+        this->description = description_;
     }
 
-    void setDescription(const std::string &description) {
-        this->description = description;
+    void setId(const std::string &id_) {
+        this->id = id_;
     }
 
-    void setSize(size_t size) {
-        this->size = size;
+    void setSize(size_t size_) {
+        this->size = size_;
     }
 
     std::string name;
@@ -97,5 +105,6 @@ private:
     std::string license;
     std::string buildtimestamp;
     std::string description;
-    size_t size;
+    std::string id;
+    size_t size{};
 };

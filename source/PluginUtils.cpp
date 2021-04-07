@@ -20,12 +20,6 @@
 #include "wups_backend/PluginUtils.h"
 #include "imports.h"
 
-#define ERROR_NONE      0
-#define ERROR_INVALID_SIZE      0xFFFFFFFF
-#define ERROR_INVALID_ARG       0xFFFFFFFE
-#define ERROR_FAILED_ALLOC      0xFFFFFFFD
-#define ERROR_FILE_NOT_FOUND    0xFFFFFFFC
-
 std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForBuffer(char *buffer, size_t size) {
     plugin_information info;
     memset(&info, 0, sizeof(info));
@@ -40,6 +34,7 @@ std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForBuffer(ch
                                    info.license,
                                    info.buildTimestamp,
                                    info.description,
+                                   info.id,
                                    info.size);
 
     return metaInfo;
@@ -48,7 +43,7 @@ std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForBuffer(ch
 std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForPath(const std::string &path) {
     plugin_information info;
     memset(&info, 0, sizeof(info));
-    if (WUPSGetPluginMetaInformationByPath(&info, path.c_str()) != ERROR_NONE) {
+    if (WUPSGetPluginMetaInformationByPath(&info, path.c_str()) != PLUGIN_BACKEND_API_ERROR_NONE) {
         // DEBUG_FUNCTION_LINE("Failed to load meta infos for %s\n", path.c_str());
         return std::nullopt;
     }
@@ -58,6 +53,7 @@ std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForPath(cons
                                    info.license,
                                    info.buildTimestamp,
                                    info.description,
+                                   info.id,
                                    info.size);
     return metaInfo;
 }
@@ -69,12 +65,12 @@ std::optional<PluginContainer> PluginUtils::getPluginForPath(const std::string &
     }
 
     plugin_data_handle dataHandle;
-    if (WUPSLoadPluginAsDataByPath(&dataHandle, path.c_str()) != ERROR_NONE) {
+    if (WUPSLoadPluginAsDataByPath(&dataHandle, path.c_str()) != PLUGIN_BACKEND_API_ERROR_NONE) {
         // DEBUG_FUNCTION_LINE("Failed to load data");
         return std::nullopt;
     }
 
-    return PluginContainer(PluginData(dataHandle), metaInfoOpt.value(), ERROR_NONE);
+    return PluginContainer(PluginData(dataHandle), metaInfoOpt.value(), PLUGIN_BACKEND_API_ERROR_NONE);
 }
 
 std::optional<PluginContainer> PluginUtils::getPluginForBuffer(char *buffer, size_t size) {
@@ -84,7 +80,7 @@ std::optional<PluginContainer> PluginUtils::getPluginForBuffer(char *buffer, siz
     }
 
     plugin_data_handle dataHandle;
-    if (WUPSLoadPluginAsDataByBuffer(&dataHandle, buffer, size) != ERROR_NONE) {
+    if (WUPSLoadPluginAsDataByBuffer(&dataHandle, buffer, size) != PLUGIN_BACKEND_API_ERROR_NONE) {
         // DEBUG_FUNCTION_LINE("Failed to load data");
         return std::nullopt;
     }
@@ -94,13 +90,17 @@ std::optional<PluginContainer> PluginUtils::getPluginForBuffer(char *buffer, siz
 
 std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
     std::vector<PluginContainer> result;
-    plugin_container_handle *handles = (plugin_container_handle *) malloc(maxSize * sizeof(plugin_container_handle));
-    if (!handles) {
+    auto *handles = (plugin_container_handle *) malloc(maxSize * sizeof(plugin_container_handle));
+    if (handles == nullptr) {
         return result;
     }
     uint32_t realSize = 0;
 
-    if (WUPSGetLoadedPlugins(handles, maxSize, &realSize) != ERROR_NONE) {
+    for (uint32_t i = 0; i < maxSize; i++) {
+        handles[i] = 0xFFFFFFFF;
+    }
+
+    if (WUPSGetLoadedPlugins(handles, maxSize, &realSize) != PLUGIN_BACKEND_API_ERROR_NONE) {
         free(handles);
         // DEBUG_FUNCTION_LINE("Failed");
         return result;
@@ -111,26 +111,26 @@ std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
         return result;
     }
 
-    plugin_data_handle *dataHandles = (plugin_data_handle *) malloc(realSize * sizeof(plugin_data_handle));
-    if(!dataHandles){
+    auto *dataHandles = (plugin_data_handle *) malloc(realSize * sizeof(plugin_data_handle));
+    if (!dataHandles) {
         free(handles);
         return result;
     }
 
-    if (WUPSGetPluginDataForContainerHandles(handles, dataHandles, realSize) != ERROR_NONE) {
+    if (WUPSGetPluginDataForContainerHandles(handles, dataHandles, realSize) != PLUGIN_BACKEND_API_ERROR_NONE) {
         free(handles);
         free(dataHandles);
         // DEBUG_FUNCTION_LINE("Failed to get plugin data");
         return result;
     }
 
-    plugin_information* information  = (plugin_information *) malloc(realSize * sizeof(plugin_information));
-    if(!information){
+    auto *information = (plugin_information *) malloc(realSize * sizeof(plugin_information));
+    if (!information) {
         free(handles);
         free(dataHandles);
         return result;
     }
-    if (WUPSGetMetaInformation(handles, information, realSize) != ERROR_NONE) {
+    if (WUPSGetMetaInformation(handles, information, realSize) != PLUGIN_BACKEND_API_ERROR_NONE) {
         free(handles);
         free(dataHandles);
         free(information);
@@ -145,6 +145,7 @@ std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
                                        information[i].license,
                                        information[i].buildTimestamp,
                                        information[i].description,
+                                       information[i].id,
                                        information[i].size);
         PluginData pluginData((uint32_t) dataHandles[i]);
         result.emplace_back(pluginData, metaInfo, handles[i]);
@@ -171,7 +172,7 @@ void PluginUtils::destroyPluginContainer(std::vector<PluginContainer> &plugins) 
 
     uint32_t cntC = 0;
     uint32_t cntD = 0;
-    for (auto &plugin : plugins) {
+    for (auto &plugin: plugins) {
         if (plugin.getHandle() != 0) {
             container_handles[cntC] = plugin.getHandle();
             cntC++;
@@ -193,7 +194,7 @@ int32_t PluginUtils::LoadAndLinkOnRestart(std::vector<PluginContainer> &plugins)
     uint32_t dataSize = plugins.size();
     plugin_data_handle handles[dataSize];
     int i = 0;
-    for (auto &plugin:plugins) {
+    for (auto &plugin: plugins) {
         plugin_data_handle handle = plugin.getPluginData().getHandle();
         if (handle == 0) {
             dataSize--;
@@ -203,7 +204,5 @@ int32_t PluginUtils::LoadAndLinkOnRestart(std::vector<PluginContainer> &plugins)
         }
     }
 
-    int res = WUPSLoadAndLinkByDataHandle(handles, dataSize);
-    // DEBUG_FUNCTION_LINE("%d", res);
-    return res;
+    return WUPSLoadAndLinkByDataHandle(handles, dataSize);;
 }

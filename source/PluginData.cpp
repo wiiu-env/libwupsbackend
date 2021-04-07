@@ -15,7 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  ****************************************************************************/
 
-#include <cstdint>
 #include "wups_backend/PluginData.h"
 
 PluginData::PluginData(uint32_t handle) {

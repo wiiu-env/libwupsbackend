@@ -10,8 +10,10 @@ TOPDIR ?= $(CURDIR)
 
 include $(DEVKITPRO)/wut/share/wut_rules
 
+WUPS_ROOT := $(DEVKITPRO)/wups
+
 export VER_MAJOR	:=	1
-export VER_MINOR	:=	0
+export VER_MINOR	:=	1
 export VER_PATCH	:=	0
 
 VERSION	:=	$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)
@@ -33,14 +35,14 @@ INCLUDES	:=	source \
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-CFLAGS	:=	-Wall -Werror -save-temps \
+CFLAGS	:=	-Wall -Werror -save-temps -fno-exceptions -fno-rtti\
 			-ffunction-sections -fdata-sections \
 			$(MACHDEP) \
 			$(BUILD_CFLAGS)
 
 CFLAGS	+=	$(INCLUDE) -D__WIIU__
 
-CXXFLAGS	:= $(CFLAGS) -std=gnu++17
+CXXFLAGS	:= $(CFLAGS) -std=c++20
 
 ASFLAGS	:=	$(MACHDEP)
 
@@ -53,7 +55,7 @@ LIBS	:=
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS) $(WUT_ROOT)
+LIBDIRS	:= $(PORTLIBS) $(WUT_ROOT) $(WUPS_ROOT)
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional

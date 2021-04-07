@@ -19,19 +19,22 @@
 
 #include <optional>
 #include <cstring>
+#include <utility>
 
-PluginMetaInformation::PluginMetaInformation(std::string name,
-                                             std::string author,
-                                             std::string version,
-                                             std::string license,
-                                             std::string buildtimestamp,
-                                             std::string description,
-                                             size_t size) {
-    this->name = name;
-    this->author = author;
-    this->size = size;
-    this->buildtimestamp = buildtimestamp;
-    this->description = description;
-    this->license = license;
-    this->version = version;
+PluginMetaInformation::PluginMetaInformation(const std::string& name_,
+                                             const std::string& author_,
+                                             const std::string& version_,
+                                             const std::string& license_,
+                                             const std::string& buildtimestamp_,
+                                             const std::string& description_,
+                                             const std::string& id_,
+                                             size_t size_) {
+    this->name = name_;
+    this->author = author_;
+    this->size = size_;
+    this->buildtimestamp = buildtimestamp_;
+    this->description = description_;
+    this->license = license_;
+    this->version = version_;
+    this->id = id_;
 }

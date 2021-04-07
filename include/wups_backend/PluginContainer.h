@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2019,2020 Maschell
+ * Copyright (C) 2019-2021 Maschell
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +17,27 @@
 
 #pragma once
 
+#include <cstdint>
+
 #include "PluginMetaInformation.h"
 #include "PluginData.h"
 
 class PluginContainer {
 
 public:
-    PluginContainer(const PluginData &data, const PluginMetaInformation &metaInfo, uint32_t handle) : pluginData(data), metaInformation(metaInfo) {
+    PluginContainer(const PluginData &data, PluginMetaInformation metaInfo, uint32_t handle) : pluginData(data), metaInformation(std::move(metaInfo)) {
         this->handle = handle;
     }
 
-    uint32_t getHandle() const {
+    [[nodiscard]] uint32_t getHandle() const {
         return this->handle;
     }
 
-    const PluginMetaInformation &getMetaInformation() const {
+    [[nodiscard]] const PluginMetaInformation &getMetaInformation() const {
         return this->metaInformation;
     }
 
-    const PluginData &getPluginData() const {
+    [[nodiscard]] const PluginData &getPluginData() const {
         return pluginData;
     }
 
