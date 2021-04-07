@@ -25,7 +25,8 @@ VERSION	:=	$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)
 #-------------------------------------------------------------------------------
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source
+SOURCES		:=	source \
+                source/config
 DATA		:=	data
 INCLUDES	:=	source \
 				include \
