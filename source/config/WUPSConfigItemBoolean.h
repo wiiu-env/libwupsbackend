@@ -18,6 +18,7 @@
 #pragma once
 
 #include <string>
+#include <optional>
 #include "WUPSConfigItem.h"
 #include "WUPSConfigItemWrapper.h"
 
@@ -61,14 +62,14 @@ public:
 
     bool callCallback() override;
 
-    static WUPSConfigItemBoolean *Create(const std::string &configID, const std::string &displayName, bool defaultValue, BooleanValueChangedCallback callback) {
+    static std::optional<WUPSConfigItemBoolean *> Create(const std::string &configID, const std::string &displayName, bool defaultValue, BooleanValueChangedCallback callback) {
         auto item = new WUPSConfigItemBoolean(defaultValue, callback);
 
         if (WUPSConfigItemWrapper::Create(configID, displayName, item)) {
             return item;
         } else {
             delete item;
-            return nullptr;
+            return {};
         }
     }
 

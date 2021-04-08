@@ -118,6 +118,10 @@ public:
         this->handle = _handle;
     }
 
+    [[nodiscard]] WUPSConfigItemHandle getHandle() const {
+        return this->handle;
+    }
+
 private:
     WUPSConfigItemHandle handle{};
 };

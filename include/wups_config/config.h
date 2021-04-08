@@ -16,17 +16,21 @@
 typedef int32_t WUPSConfigButtons;
 
 typedef struct {
-    int32_t (*getCurrentValueDisplay)(void *, char *out_buf, int32_t out_size);
+    int32_t (*getCurrentValueDisplay)(void * context, char *out_buf, int32_t out_size);
 
-    int32_t (*getCurrentValueSelectedDisplay)(void *, char *out_buf, int32_t out_size);
+    int32_t (*getCurrentValueSelectedDisplay)(void * context, char *out_buf, int32_t out_size);
 
-    void (*onSelected)(void *, bool);
+    void (*onSelected)(void * context, bool isSelected);
 
-    void (*restoreDefault)(void *);
+    void (*restoreDefault)(void * context);
 
-    bool (*isMovementAllowed)(void *);
+    bool (*isMovementAllowed)(void * context);
 
-    bool (*callCallback)(void *);
+    bool (*callCallback)(void * context);
 
-    void (*onButtonPressed)(void *, WUPSConfigButtons);
+    void (*onButtonPressed)(void * context, WUPSConfigButtons button);
 } WUPSConfigCallbacks_t;
+
+typedef uint32_t WUPSConfigItemHandle;
+typedef uint32_t WUPSConfigHandle;
+typedef uint32_t WUPSConfigCategoryHandle;
