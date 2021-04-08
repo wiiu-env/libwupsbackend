@@ -20,9 +20,11 @@ extern int32_t WUPSConfig_AddCategoryByName(WUPSConfigHandle handle, const char 
 
 extern int32_t WUPSConfig_AddCategory(WUPSConfigHandle handle, WUPSConfigCategoryHandle category);
 
+/*
 extern int32_t WUPSConfig_GetCategoryCount(WUPSConfigHandle handle, int32_t *category_count);
 
 extern int32_t WUPSConfig_GetCategories(WUPSConfigHandle handle, WUPSConfigCategoryHandle *categories_out, int32_t categories_out_size);
+ */
 
 
 extern int32_t WUPSConfigCategory_Create(WUPSConfigCategoryHandle *out, const char *name);
