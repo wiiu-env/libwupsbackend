@@ -44,13 +44,12 @@ public:
 
         \return On success, the created and inserted category will be returned.
     **/
-    std::optional<WUPSConfigCategory *> addCategory(const std::string &categoryName) {
+    std::optional<WUPSConfigCategory> addCategory(const std::string &categoryName) {
         WUPSConfigCategoryHandle catHandle;
         if (WUPSConfig_AddCategoryByName(this->handle, categoryName.c_str(), &catHandle) < 0) {
             return {};
         }
-        auto *curCat = new WUPSConfigCategory(catHandle);
-        return curCat;
+        return WUPSConfigCategory(catHandle);
     }
 
     /**
@@ -64,31 +63,39 @@ public:
                 On error NULL will be returned. In this case the caller still has the responsibility
                 for deleting the WUPSConfigCategory instance.
     **/
-    bool addCategory(WUPSConfigCategory *category) {
-        if (WUPSConfig_AddCategory(this->handle, category->getHandle()) == 0) {
+    bool addCategory(const WUPSConfigCategory &category) {
+        if (WUPSConfig_AddCategory(this->handle, category.getHandle()) == 0) {
             return true;
         }
         return false;
     }
 
-    static std::optional<WUPSConfig *> Create(const std::string &name) {
+    static std::optional<WUPSConfig> Create(const std::string &name) {
         WUPSConfigHandle handle;
         if (WUPSConfig_Create(&handle, name.c_str()) == 0) {
-            return new WUPSConfig(handle);
+            return WUPSConfig(handle);
         }
         return {};
     }
 
 
-    static void Destroy(WUPSConfig *&config) {
+    static void Destroy(const WUPSConfig &config) {
 
+    }
+
+
+    WUPSConfig(const WUPSConfig &other) = default;
+
+
+    ~WUPSConfig() = default;
+
+    [[nodiscard]] WUPSConfigHandle getHandle() const {
+        return handle;
     }
 
 private:
     explicit WUPSConfig(WUPSConfigHandle _handle) : handle(_handle) {
     }
-
-    ~WUPSConfig() = default;
 
     const WUPSConfigHandle handle;
     std::string name;

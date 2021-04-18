@@ -78,7 +78,7 @@ public:
         ptr->restoreDefault();
     }
 
-    static bool Create(const std::string &_configID, const std::string &_displayName, WUPSConfigItem *item) {
+    static bool Create(const std::string &_configID, const std::string &_displayName, WUPSConfigItem &item) {
         WUPSConfigCallbacks_t callbacks = {};
         callbacks.getCurrentValueDisplay = &WUPSConfigItemWrapper::getCurrentValueDisplay;
         callbacks.callCallback = &WUPSConfigItemWrapper::callCallback;
@@ -87,8 +87,8 @@ public:
         callbacks.onButtonPressed = &WUPSConfigItemWrapper::onButtonPressed;
         callbacks.restoreDefault = &WUPSConfigItemWrapper::restoreDefault;
         WUPSConfigItemHandle handle;
-        if (WUPSConfigItem_Create(&handle, _configID.c_str(), _displayName.c_str(), callbacks, (void *) item) == 0) {
-            item->setHandle(handle);
+        if (WUPSConfigItem_Create(&handle, _configID.c_str(), _displayName.c_str(), callbacks, (void *) &item) == 0) {
+            item.setHandle(handle);
             return true;
         }
         return false;

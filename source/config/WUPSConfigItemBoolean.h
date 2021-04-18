@@ -62,13 +62,12 @@ public:
 
     bool callCallback() override;
 
-    static std::optional<WUPSConfigItemBoolean *> Create(const std::string &configID, const std::string &displayName, bool defaultValue, BooleanValueChangedCallback callback) {
-        auto item = new WUPSConfigItemBoolean(defaultValue, callback);
+    static std::optional<WUPSConfigItemBoolean> Create(const std::string &configID, const std::string &displayName, bool defaultValue, BooleanValueChangedCallback callback) {
+        WUPSConfigItemBoolean item(defaultValue, callback);
 
-        if (WUPSConfigItemWrapper::Create(configID, displayName, item)) {
+        if (WUPSConfigItemWrapper::Create(configID, displayName, item) == 0) {
             return item;
         } else {
-            delete item;
             return {};
         }
     }

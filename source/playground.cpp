@@ -1,27 +1,27 @@
 #include <config/WUPSConfigItemBoolean.h>
 #include <config/WUPSConfigCategory.h>
 #include "config/WUPSConfig.h"
-/*
+
 bool isRumbleActivated();
 
 void rumbleChanged(WUPSConfigItemBoolean *item, bool newValue) {
 }
 
-WUPSConfig *getConfig() {
+WUPSConfigHandle getConfig() {
     auto config = WUPSConfig::Create("HID to VPAD");
     if (!config.has_value()) {
-        return nullptr;
+        return 0;
     }
-    std::optional<WUPSConfigCategory *> catOther = config.value()->addCategory("Other");
+    std::optional<WUPSConfigCategory> catOther = config->addCategory("Other");
     if (!catOther.has_value()) {
         WUPSConfig::Destroy(config.value());
-        return nullptr;
+        return 0;
     }
-    if (!catOther.value()->addItem(WUPSConfigItemBoolean::Create("rumble", "Enable rumble", isRumbleActivated(), rumbleChanged))) {
+    if (!catOther->addItem(WUPSConfigItemBoolean::Create("rumble", "Enable rumble", isRumbleActivated(), rumbleChanged).value())) {
         WUPSConfig::Destroy(config.value());
-        return nullptr;
+        return 0;
     }
-    return config.value();
+    return config.value().getHandle();
 }
 
 WUPSConfig *getConfig1() {
@@ -37,4 +37,3 @@ WUPSConfig *getConfig1() {
 bool isRumbleActivated() {
     return false;
 }
-*/

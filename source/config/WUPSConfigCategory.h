@@ -46,8 +46,8 @@ public:
                 On error false will be returned. In this case the caller still has the responsibility
                 for deleting the WUPSConfigItem instance.
     **/
-    [[nodiscard]] bool addItem(WUPSConfigItem *item) {
-        if (WUPSConfigCategory_AddItem(this->handle, item->getHandle())) {
+    [[nodiscard]] bool addItem(const WUPSConfigItem &item) {
+        if (WUPSConfigCategory_AddItem(this->handle, item.getHandle())) {
             return true;
         }
         return false;
@@ -65,11 +65,14 @@ public:
         return this->handle;
     }
 
+    WUPSConfigCategory(const WUPSConfigCategory &cat) = default;
+
+    ~WUPSConfigCategory() = default;
+
 private:
     explicit WUPSConfigCategory(WUPSConfigCategoryHandle _handle) : handle(_handle) {
     }
 
-    ~WUPSConfigCategory() = default;
 
 private:
     const WUPSConfigCategoryHandle handle;

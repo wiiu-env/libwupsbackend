@@ -36,7 +36,7 @@ public:
     /**
         \return Returns the display name of this WUPSConfigItem
     **/
-    std::string getDisplayName() {
+    std::string getDisplayName() const {
         char buf[256];
         if (WUPSConfigItem_GetDisplayName(this->handle, buf, sizeof(buf)) == 0) {
             return buf;
