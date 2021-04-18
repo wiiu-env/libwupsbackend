@@ -19,9 +19,13 @@
 
 #include <string>
 #include <vector>
+#include <mutex>
 
-#include <wups_config/config.h>
-#include "config_imports.h"
+#include <wups/config.h>
+#include "../../../WiiUPluginSystem/include/wups_config/config_imports.h"
+
+std::vector<WUPSConfigItem *> storedItems;
+std::recursive_mutex mutex;
 
 class WUPSConfigItemWrapper {
 public:
@@ -36,7 +40,7 @@ public:
         return 0;
     }
 
-    static int32_t getCurrentValueSelectedDisplay(void *context, char *out_buf, int32_t out_size) {
+    static int32_t getCurrentValueSelectedDisplay(void *context, char *out_buf, int32_t out_size){
         if (context == nullptr || out_buf == nullptr) {
             return -1;
         }
@@ -46,7 +50,7 @@ public:
         return 0;
     }
 
-    static bool callCallback(void *context) {
+    static bool callCallback(void *context){
         if (context == nullptr) {
             return false;
         }
@@ -54,7 +58,7 @@ public:
         return ptr->callCallback();
     }
 
-    static bool isMovementAllowed(void *context) {
+    static bool isMovementAllowed(void *context){
         if (context == nullptr) {
             return false;
         }
@@ -62,7 +66,7 @@ public:
         return ptr->isMovementAllowed();
     }
 
-    static void onButtonPressed(void *context, WUPSConfigButtons buttons) {
+    static void onButtonPressed(void *context, WUPSConfigButtons buttons){
         if (context == nullptr) {
             return;
         }
@@ -70,7 +74,7 @@ public:
         ptr->onButtonPressed(buttons);
     }
 
-    static void restoreDefault(void *context) {
+    static void restoreDefault(void *context){
         if (context == nullptr) {
             return;
         }
@@ -78,8 +82,18 @@ public:
         ptr->restoreDefault();
     }
 
+    static void CleanUp() {
+        mutex.lock();
+        for(std::size_t i = 0; i < storedItems.size(); ++i) {
+            delete storedItems[i];
+        }
+        storedItems.clear();
+        mutex.unlock();
+    }
+
     static bool Create(const std::string &_configID, const std::string &_displayName, WUPSConfigItem &item) {
-        WUPSConfigCallbacks_t callbacks = {};
+        auto itemCpy = item.cloneOnHeap();
+        WUPSConfigCallbacks_t callbacks {};
         callbacks.getCurrentValueDisplay = &WUPSConfigItemWrapper::getCurrentValueDisplay;
         callbacks.callCallback = &WUPSConfigItemWrapper::callCallback;
         callbacks.getCurrentValueSelectedDisplay = &WUPSConfigItemWrapper::getCurrentValueSelectedDisplay;
@@ -87,10 +101,14 @@ public:
         callbacks.onButtonPressed = &WUPSConfigItemWrapper::onButtonPressed;
         callbacks.restoreDefault = &WUPSConfigItemWrapper::restoreDefault;
         WUPSConfigItemHandle handle;
-        if (WUPSConfigItem_Create(&handle, _configID.c_str(), _displayName.c_str(), callbacks, (void *) &item) == 0) {
-            item.setHandle(handle);
+        if (WUPSConfigItem_Create(&handle, _configID.c_str(), _displayName.c_str(), callbacks, (void *) itemCpy) == 0) {
+            mutex.lock();
+            storedItems.push_back(itemCpy);
+            mutex.unlock();
+            itemCpy->setHandle(handle);
             return true;
         }
         return false;
     }
+
 };

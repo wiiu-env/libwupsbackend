@@ -19,9 +19,8 @@
 
 #include <string>
 #include <vector>
-
-#include <wups_config/config.h>
-#include "config_imports.h"
+#include <wups/config.h>
+#include "../../../WiiUPluginSystem/include/wups_config/config_imports.h"
 
 class WUPSConfigItem {
 public:
@@ -29,14 +28,14 @@ public:
         Sets the display name of this WUPSConfigItem
         This is the value which will be shown in the configuration menu.
     **/
-    void setDisplayName(const std::string &_displayName) {
+    void setDisplayName(const std::string &_displayName) const {
         WUPSConfigItem_SetDisplayName(this->handle, _displayName.c_str());
     }
 
     /**
         \return Returns the display name of this WUPSConfigItem
     **/
-    std::string getDisplayName() const {
+    [[nodiscard]] std::string getDisplayName() const {
         char buf[256];
         if (WUPSConfigItem_GetDisplayName(this->handle, buf, sizeof(buf)) == 0) {
             return buf;
@@ -111,6 +110,8 @@ public:
         Returns false if no callback was called (e.g. callback was NULL)
     **/
     virtual bool callCallback() = 0;
+
+    virtual WUPSConfigItem* cloneOnHeap() = 0;
 
     virtual ~WUPSConfigItem() = default;
 

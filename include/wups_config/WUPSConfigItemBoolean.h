@@ -19,6 +19,7 @@
 
 #include <string>
 #include <optional>
+#include <wups/config.h>
 #include "WUPSConfigItem.h"
 #include "WUPSConfigItemWrapper.h"
 
@@ -34,33 +35,76 @@ public:
         Sets the name with will be displayed as "true" value
         \param name of the "true" value
     **/
-    void setTrueValueName(const std::string &trueValName);
+    void setTrueValueName(const std::string &_trueValName) {
+        this->trueValName = _trueValName;
+    }
 
     /**
         Sets the name with will be displayed as "false" value
         \param name of the "false" value
     **/
-    void setFalseValueName(const std::string &falseValName);
+    void setFalseValueName(const std::string &_falseValName) {
+        this->falseValName = _falseValName;
+    }
 
     /**
         Toggles the value. When it was true, it now false, when it was false, it's now true.
         Call the callback with the new value.
     **/
-    virtual void toggleValue();
+    virtual void toggleValue() {
+        value = !value;
+    }
 
-    [[nodiscard]] std::string getCurrentValueDisplay() override;
+    [[nodiscard]] std::string getCurrentValueDisplay() override {
+        if (value) {
+            return std::string("  ").append(trueValName);
+        } else {
+            return std::string("  ").append(falseValName);
+        }
+    }
 
-    [[nodiscard]] std::string getCurrentValueSelectedDisplay() override;
+    [[nodiscard]] std::string getCurrentValueSelectedDisplay() override {
+        if (value) {
+            return std::string("  ").append(trueValName).append(" >");
+        } else {
+            return std::string("< ").append(falseValName);
+        }
+    }
 
-    void onSelected(bool isSelected) override;
+    void onSelected(bool isSelected) override {
 
-    void onButtonPressed(WUPSConfigButtons buttons) override;
+    }
 
-    bool isMovementAllowed() override;
+    void onButtonPressed(WUPSConfigButtons buttons) override {
+        if ((buttons & WUPS_CONFIG_BUTTON_A) == WUPS_CONFIG_BUTTON_A) {
+            toggleValue();
+        } else if (buttons & WUPS_CONFIG_BUTTON_LEFT && !value) {
+            toggleValue();
+        } else if ((buttons & WUPS_CONFIG_BUTTON_RIGHT) && value) {
+            toggleValue();
+        }
+    }
 
-    void restoreDefault() override;
+    bool isMovementAllowed() override {
+        return true;
+    }
 
-    bool callCallback() override;
+    void restoreDefault() override {
+        this->value = this->defaultValue;
+    }
+
+    bool callCallback() override {
+        if (callback != nullptr) {
+            callback(this, this->value);
+            return true;
+        }
+        return false;
+    }
+    WUPSConfigItem* cloneOnHeap() override {
+        auto res = new WUPSConfigItemBoolean(this->defaultValue, this->callback);
+        res->setHandle(this->getHandle());
+        return res;
+    }
 
     static std::optional<WUPSConfigItemBoolean> Create(const std::string &configID, const std::string &displayName, bool defaultValue, BooleanValueChangedCallback callback) {
         WUPSConfigItemBoolean item(defaultValue, callback);
@@ -73,7 +117,11 @@ public:
     }
 
 private:
-    WUPSConfigItemBoolean(bool defaultValue, BooleanValueChangedCallback callback);
+    WUPSConfigItemBoolean(bool defaultValue, BooleanValueChangedCallback callback) {
+        this->defaultValue = defaultValue;
+        this->value = defaultValue;
+        this->callback = callback;
+    }
 
     BooleanValueChangedCallback callback = nullptr;
     bool value;

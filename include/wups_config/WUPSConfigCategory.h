@@ -19,6 +19,7 @@
 
 #include <string>
 #include <vector>
+#include <wups/config.h>
 #include "WUPSConfigItem.h"
 
 class WUPSConfigCategory {
@@ -28,6 +29,9 @@ public:
         \return Returns the name of this WUPSConfigCategory
     **/
     [[nodiscard]] std::string getName() const {
+        if (isDestroyed) {
+            return "ERROR";
+        }
         char buf[256];
         if (WUPSConfigCategory_GetName(this->handle, buf, sizeof(buf)) == 0) {
             return buf;
@@ -46,7 +50,10 @@ public:
                 On error false will be returned. In this case the caller still has the responsibility
                 for deleting the WUPSConfigItem instance.
     **/
-    [[nodiscard]] bool addItem(const WUPSConfigItem &item) {
+    [[nodiscard]] bool addItem(const WUPSConfigItem &item) const {
+        if (isDestroyed) {
+            return false;
+        }
         if (WUPSConfigCategory_AddItem(this->handle, item.getHandle())) {
             return true;
         }
@@ -61,8 +68,20 @@ public:
         return nullptr;
     }
 
+
     [[nodiscard]] WUPSConfigItemHandle getHandle() const {
         return this->handle;
+    }
+
+
+    void Destroy() {
+        if (isDestroyed || this->handle == 0) {
+            isDestroyed = true;
+            return;
+        }
+        if (WUPSConfigCategory_Destroy(this->handle) == 0) {
+            isDestroyed = true;
+        };
     }
 
     WUPSConfigCategory(const WUPSConfigCategory &cat) = default;
@@ -73,7 +92,7 @@ private:
     explicit WUPSConfigCategory(WUPSConfigCategoryHandle _handle) : handle(_handle) {
     }
 
-
 private:
+    bool isDestroyed = false;
     const WUPSConfigCategoryHandle handle;
 };

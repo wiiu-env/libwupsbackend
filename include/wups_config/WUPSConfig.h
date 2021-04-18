@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <wups/config.h>
 #include <string>
 #include <vector>
 #include <optional>
@@ -28,8 +29,11 @@ public:
         \return Returns the name of this WUPSConfig
     **/
     [[nodiscard]] std::string getName() const {
+        if (isDestroyed) {
+            return "DESTROYED";
+        }
         char buf[256];
-        if (WUPSConfigCategory_GetName(this->handle, buf, sizeof(buf)) == 0) {
+        if (WUPSConfig_GetName(this->handle, buf, sizeof(buf)) == 0) {
             return buf;
         }
         return "ERROR";
@@ -44,7 +48,7 @@ public:
 
         \return On success, the created and inserted category will be returned.
     **/
-    std::optional<WUPSConfigCategory> addCategory(const std::string &categoryName) {
+    [[nodiscard]] std::optional<WUPSConfigCategory> addCategory(const std::string &categoryName) const {
         WUPSConfigCategoryHandle catHandle;
         if (WUPSConfig_AddCategoryByName(this->handle, categoryName.c_str(), &catHandle) < 0) {
             return {};
@@ -55,18 +59,17 @@ public:
     /**
         \brief  Adds a given WUPSConfigCategory to this WUPSConfig.
                 The category will be added to the end of the list.
-                This class holds responsibility for deleting the created instance.
+                The given category will be **always** deleted by the WUPSConfig
 
         \param category: The category that will be added to this config.
 
         \return On success, the inserted category will be returned.
-                On error NULL will be returned. In this case the caller still has the responsibility
-                for deleting the WUPSConfigCategory instance.
     **/
-    bool addCategory(const WUPSConfigCategory &category) {
+    bool addCategory(WUPSConfigCategory &category) const {
         if (WUPSConfig_AddCategory(this->handle, category.getHandle()) == 0) {
             return true;
         }
+        category.Destroy();
         return false;
     }
 
@@ -78,14 +81,18 @@ public:
         return {};
     }
 
+    void Destroy() {
+        if (isDestroyed || this->handle == 0) {
+            isDestroyed = true;
+            return;
+        }
 
-    static void Destroy(const WUPSConfig &config) {
-
+        if (WUPSConfig_Destroy(this->handle) == 0) {
+            isDestroyed = true;
+        };
     }
 
-
     WUPSConfig(const WUPSConfig &other) = default;
-
 
     ~WUPSConfig() = default;
 
@@ -98,5 +105,6 @@ private:
     }
 
     const WUPSConfigHandle handle;
+    bool isDestroyed = false;
     std::string name;
 };

@@ -1,5 +1,7 @@
 FROM wiiuenv/devkitppc:20210101
 
+COPY --from=wiiuenv/wiiupluginsystem:20210418 /artifacts $DEVKITPRO
+
 WORKDIR tmp_build
 COPY . .
 RUN make clean && make && mkdir -p /artifacts/wups && cp -r lib /artifacts/wups && cp -r include /artifacts/wups && cp -r share /artifacts/wups
