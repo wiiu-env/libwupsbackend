@@ -18,22 +18,25 @@
 #pragma once
 
 typedef enum GetPluginInformationInputType {
-    PLUGIN_INFORMATION_INPUT_TYPE_PATH = 0,
-    PLUGIN_INFORMATION_INPUT_TYPE_BUFFER = 1,
+    PLUGIN_INFORMATION_INPUT_TYPE_PATH      = 0,
+    PLUGIN_INFORMATION_INPUT_TYPE_BUFFER    = 1,
 } GetPluginInformationInputType;
 
 typedef uint32_t plugin_container_handle;
 typedef uint32_t plugin_data_handle;
 
+#define PLUGIN_INFORMATION_VERSION      0x00000001
+
 /* plugin_information message */
 typedef struct __attribute__((__packed__)) plugin_information {
-    char id[256];
+    uint32_t plugin_information_version;
     char name[256];
     char author[256];
     char buildTimestamp[256];
     char description[256];
     char license[256];
     char version[256];
+    char storageId[256];
     size_t size;
 } plugin_information;
 

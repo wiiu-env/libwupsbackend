@@ -28,13 +28,17 @@ std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForBuffer(ch
         return std::nullopt;
     }
 
+    if (info.plugin_information_version != PLUGIN_INFORMATION_VERSION) {
+        return std::nullopt;
+    }
+
     PluginMetaInformation metaInfo(info.name,
                                    info.author,
                                    info.version,
                                    info.license,
                                    info.buildTimestamp,
                                    info.description,
-                                   info.id,
+                                   info.storageId,
                                    info.size);
 
     return metaInfo;
@@ -47,13 +51,16 @@ std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForPath(cons
         // DEBUG_FUNCTION_LINE("Failed to load meta infos for %s\n", path.c_str());
         return std::nullopt;
     }
+    if (info.plugin_information_version != PLUGIN_INFORMATION_VERSION) {
+        return std::nullopt;
+    }
     PluginMetaInformation metaInfo(info.name,
                                    info.author,
                                    info.version,
                                    info.license,
                                    info.buildTimestamp,
                                    info.description,
-                                   info.id,
+                                   info.storageId,
                                    info.size);
     return metaInfo;
 }
@@ -100,12 +107,14 @@ std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
         handles[i] = 0xFFFFFFFF;
     }
 
-    if (WUPSGetLoadedPlugins(handles, maxSize, &realSize) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    uint32_t plugin_information_version = 0;
+
+    if (WUPSGetLoadedPlugins(handles, maxSize, &realSize, &plugin_information_version) != PLUGIN_BACKEND_API_ERROR_NONE) {
         free(handles);
         // DEBUG_FUNCTION_LINE("Failed");
         return result;
     }
-    if (realSize == 0) {
+    if (realSize == 0 || plugin_information_version != PLUGIN_INFORMATION_VERSION) {
         free(handles);
         // DEBUG_FUNCTION_LINE("realsize is 0");
         return result;
@@ -139,13 +148,16 @@ std::vector<PluginContainer> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
     }
 
     for (uint32_t i = 0; i < realSize; i++) {
+        if (information[i].plugin_information_version != PLUGIN_INFORMATION_VERSION) {
+            continue;
+        }
         PluginMetaInformation metaInfo(information[i].name,
                                        information[i].author,
                                        information[i].version,
                                        information[i].license,
                                        information[i].buildTimestamp,
                                        information[i].description,
-                                       information[i].id,
+                                       information[i].storageId,
                                        information[i].size);
         PluginData pluginData((uint32_t) dataHandles[i]);
         result.emplace_back(pluginData, metaInfo, handles[i]);

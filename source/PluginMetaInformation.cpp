@@ -27,7 +27,7 @@ PluginMetaInformation::PluginMetaInformation(const std::string& name_,
                                              const std::string& license_,
                                              const std::string& buildtimestamp_,
                                              const std::string& description_,
-                                             const std::string& id_,
+                                             const std::string& storageId_,
                                              size_t size_) {
     this->name = name_;
     this->author = author_;
@@ -36,5 +36,5 @@ PluginMetaInformation::PluginMetaInformation(const std::string& name_,
     this->description = description_;
     this->license = license_;
     this->version = version_;
-    this->id = id_;
+    this->storageId = storageId_;
 }

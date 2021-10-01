@@ -47,8 +47,8 @@ public:
         return this->description;
     }
 
-    [[nodiscard]] const std::string &getId() const {
-        return this->description;
+    [[nodiscard]] const std::string &getStorageId() const {
+        return this->storageId;
     }
 
     [[nodiscard]] size_t getSize() const {
@@ -61,7 +61,7 @@ public:
                           const std::string& license,
                           const std::string& buildtimestamp,
                           const std::string& description,
-                          const std::string& id,
+                          const std::string& storageId,
                           size_t size);
 
 private:
@@ -91,8 +91,8 @@ private:
         this->description = description_;
     }
 
-    void setId(const std::string &id_) {
-        this->id = id_;
+    void setStorageId(const std::string &storageId_) {
+        this->storageId = storageId_;
     }
 
     void setSize(size_t size_) {
@@ -105,6 +105,6 @@ private:
     std::string license;
     std::string buildtimestamp;
     std::string description;
-    std::string id;
+    std::string storageId;
     size_t size{};
 };
