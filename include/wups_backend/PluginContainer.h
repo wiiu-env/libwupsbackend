@@ -19,8 +19,8 @@
 
 #include <cstdint>
 
-#include "PluginMetaInformation.h"
 #include "PluginData.h"
+#include "PluginMetaInformation.h"
 
 class PluginContainer {
 

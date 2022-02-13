@@ -17,15 +17,17 @@
 
 #pragma once
 
+#include <stdint.h>
+
 typedef enum GetPluginInformationInputType {
-    PLUGIN_INFORMATION_INPUT_TYPE_PATH      = 0,
-    PLUGIN_INFORMATION_INPUT_TYPE_BUFFER    = 1,
+    PLUGIN_INFORMATION_INPUT_TYPE_PATH   = 0,
+    PLUGIN_INFORMATION_INPUT_TYPE_BUFFER = 1,
 } GetPluginInformationInputType;
 
 typedef uint32_t plugin_container_handle;
 typedef uint32_t plugin_data_handle;
 
-#define PLUGIN_INFORMATION_VERSION      0x00000001
+#define PLUGIN_INFORMATION_VERSION 0x00000001
 
 /* plugin_information message */
 typedef struct __attribute__((__packed__)) plugin_information {
@@ -41,10 +43,9 @@ typedef struct __attribute__((__packed__)) plugin_information {
 } plugin_information;
 
 typedef enum PluginBackendApiErrorType {
-    PLUGIN_BACKEND_API_ERROR_NONE              = 0,
-    PLUGIN_BACKEND_API_ERROR_INVALID_SIZE      = 0xFFFFFFFF,
-    PLUGIN_BACKEND_API_ERROR_INVALID_ARG       = 0xFFFFFFFE,
-    PLUGIN_BACKEND_API_ERROR_FAILED_ALLOC      = 0xFFFFFFFD,
-    PLUGIN_BACKEND_API_ERROR_FILE_NOT_FOUND    = 0xFFFFFFFC,
+    PLUGIN_BACKEND_API_ERROR_NONE           = 0,
+    PLUGIN_BACKEND_API_ERROR_INVALID_SIZE   = 0xFFFFFFFF,
+    PLUGIN_BACKEND_API_ERROR_INVALID_ARG    = 0xFFFFFFFE,
+    PLUGIN_BACKEND_API_ERROR_FAILED_ALLOC   = 0xFFFFFFFD,
+    PLUGIN_BACKEND_API_ERROR_FILE_NOT_FOUND = 0xFFFFFFFC,
 } PluginBackendApiErrorType;
-

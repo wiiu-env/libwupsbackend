@@ -17,8 +17,8 @@
 
 #include <cstring>
 
-#include "wups_backend/PluginUtils.h"
 #include "imports.h"
+#include "wups_backend/PluginUtils.h"
 
 std::optional<PluginMetaInformation> PluginUtils::getMetaInformationForBuffer(char *buffer, size_t size) {
     plugin_information info;
@@ -178,13 +178,13 @@ void PluginUtils::destroyPluginContainer(PluginContainer &plugin) {
 
 void PluginUtils::destroyPluginContainer(std::vector<PluginContainer> &plugins) {
     uint32_t containerSize = plugins.size();
-    uint32_t dataSize = containerSize;
+    uint32_t dataSize      = containerSize;
     plugin_container_handle container_handles[containerSize];
     plugin_data_handle data_handles[dataSize];
 
     uint32_t cntC = 0;
     uint32_t cntD = 0;
-    for (auto &plugin: plugins) {
+    for (auto &plugin : plugins) {
         if (plugin.getHandle() != 0) {
             container_handles[cntC] = plugin.getHandle();
             cntC++;
@@ -206,7 +206,7 @@ int32_t PluginUtils::LoadAndLinkOnRestart(std::vector<PluginContainer> &plugins)
     uint32_t dataSize = plugins.size();
     plugin_data_handle handles[dataSize];
     int i = 0;
-    for (auto &plugin: plugins) {
+    for (auto &plugin : plugins) {
         plugin_data_handle handle = plugin.getPluginData().getHandle();
         if (handle == 0) {
             dataSize--;
@@ -216,5 +216,6 @@ int32_t PluginUtils::LoadAndLinkOnRestart(std::vector<PluginContainer> &plugins)
         }
     }
 
-    return WUPSLoadAndLinkByDataHandle(handles, dataSize);;
+    return WUPSLoadAndLinkByDataHandle(handles, dataSize);
+    ;
 }

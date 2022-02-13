@@ -17,9 +17,9 @@
 
 #pragma once
 
+#include <optional>
 #include <string>
 #include <vector>
-#include <optional>
 
 class PluginMetaInformation {
 public:
@@ -55,13 +55,13 @@ public:
         return this->size;
     }
 
-    PluginMetaInformation(const std::string& name,
-                          const std::string& author,
-                          const std::string& version,
-                          const std::string& license,
-                          const std::string& buildtimestamp,
-                          const std::string& description,
-                          const std::string& storageId,
+    PluginMetaInformation(const std::string &name,
+                          const std::string &author,
+                          const std::string &version,
+                          const std::string &license,
+                          const std::string &buildtimestamp,
+                          const std::string &description,
+                          const std::string &storageId,
                           size_t size);
 
 private:
