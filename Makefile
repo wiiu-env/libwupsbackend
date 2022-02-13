@@ -35,14 +35,14 @@ INCLUDES	:=	source \
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-CFLAGS	:=	-Wall -Werror -save-temps -fno-exceptions -fno-rtti\
+CFLAGS	:=	-Wall -Werror -save-temps\
 			-ffunction-sections -fdata-sections \
 			$(MACHDEP) \
 			$(BUILD_CFLAGS)
 
 CFLAGS	+=	$(INCLUDE) -D__WIIU__
 
-CXXFLAGS	:= $(CFLAGS) -std=c++20
+CXXFLAGS	:= $(CFLAGS) -std=c++20 -fno-exceptions -fno-rtti
 
 ASFLAGS	:=	$(MACHDEP)
 
