@@ -1,3 +1,5 @@
+[![Publish Docker Image](https://github.com/wiiu-env/libwupsbackend/actions/workflows/push_image.yml/badge.svg)](https://github.com/wiiu-env/libwupsbackend/actions/workflows/push_image.yml)
+
 ## libwupsbackend
 Requires the [WiiUPluginLoaderBackendModule](https://github.com/wiiu-env/WiiUPluginLoaderBackend) to be running via [WUMSLoader](https://github.com/wiiu-env/WUMSLoader).
 Requires [wut](https://github.com/devkitpro/wut) for building.
@@ -18,3 +20,7 @@ COPY --from=wiiuenv/libwupsbackend:[tag] /artifacts $DEVKITPRO
 ```
 Replace [tag] with a tag you want to use, a list of tags can be found [here](https://hub.docker.com/r/wiiuenv/libwupsbackend/tags).
 It's highly recommended to pin the version to the **latest date** instead of using `latest`.
+
+## Format the code via docker
+
+`docker run --rm -v ${PWD}:/src wiiuenv/clang-format:13.0.0-2 -r ./source ./include -i`

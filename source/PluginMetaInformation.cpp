@@ -17,24 +17,24 @@
 
 #include "wups_backend/PluginMetaInformation.h"
 
-#include <optional>
 #include <cstring>
+#include <optional>
 #include <utility>
 
-PluginMetaInformation::PluginMetaInformation(const std::string& name_,
-                                             const std::string& author_,
-                                             const std::string& version_,
-                                             const std::string& license_,
-                                             const std::string& buildtimestamp_,
-                                             const std::string& description_,
-                                             const std::string& storageId_,
+PluginMetaInformation::PluginMetaInformation(const std::string &name_,
+                                             const std::string &author_,
+                                             const std::string &version_,
+                                             const std::string &license_,
+                                             const std::string &buildtimestamp_,
+                                             const std::string &description_,
+                                             const std::string &storageId_,
                                              size_t size_) {
-    this->name = name_;
-    this->author = author_;
-    this->size = size_;
+    this->name           = name_;
+    this->author         = author_;
+    this->size           = size_;
     this->buildtimestamp = buildtimestamp_;
-    this->description = description_;
-    this->license = license_;
-    this->version = version_;
-    this->storageId = storageId_;
+    this->description    = description_;
+    this->license        = license_;
+    this->version        = version_;
+    this->storageId      = storageId_;
 }
