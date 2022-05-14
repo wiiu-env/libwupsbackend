@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2019-2021 Maschell
+ * Copyright (C) 2019-2022 Maschell
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,11 +17,13 @@
 #pragma once
 
 #include <cstdint>
+#include <wups_backend/import_defines.h>
 
 class PluginData {
 
 public:
     explicit PluginData(uint32_t handle);
+    ~PluginData();
 
     [[nodiscard]] uint32_t getHandle() const {
         return handle;

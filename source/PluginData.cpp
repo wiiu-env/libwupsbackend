@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2019,2020 Maschell
+ * Copyright (C) 2019-2022 Maschell
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,18 @@
  ****************************************************************************/
 
 #include "wups_backend/PluginData.h"
+#include "imports.h"
+#include "logger.h"
+#include <coreinit/debug.h>
 
 PluginData::PluginData(uint32_t handle) {
     this->handle = handle;
+}
+
+PluginData::~PluginData() {
+    if (handle != 0) {
+        if (WUPSDeletePluginData(&handle, 1) != PLUGIN_BACKEND_API_ERROR_NONE) {
+            DEBUG_FUNCTION_LINE_ERR("### ERROR ###: Failed to delete plugin data");
+        }
+    }
 }

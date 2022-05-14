@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2019 - 2021 Maschell
+ * Copyright (C) 2019-2022 Maschell
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,8 +24,6 @@ extern "C" {
 #endif
 
 extern PluginBackendApiErrorType WUPSLoadAndLinkByDataHandle(const plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size);
-
-extern PluginBackendApiErrorType WUPSDeletePluginContainer(const plugin_container_handle *handle_list, uint32_t handle_list_size);
 
 extern PluginBackendApiErrorType WUPSDeletePluginData(const plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size);
 
