@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2019-2021 Maschell
+ * Copyright (C) 2019-2022 Maschell
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -55,44 +55,44 @@ public:
         return this->size;
     }
 
-    PluginMetaInformation(const std::string &name,
-                          const std::string &author,
-                          const std::string &version,
-                          const std::string &license,
-                          const std::string &buildtimestamp,
-                          const std::string &description,
-                          const std::string &storageId,
+    PluginMetaInformation(std::string name,
+                          std::string author,
+                          std::string version,
+                          std::string license,
+                          std::string buildtimestamp,
+                          std::string description,
+                          std::string storageId,
                           size_t size);
 
 private:
     PluginMetaInformation() = default;
 
-    void setName(const std::string &name_) {
-        this->name = name_;
+    void setName(std::string name_) {
+        this->name = std::move(name_);
     }
 
-    void setAuthor(const std::string &author_) {
-        this->author = author_;
+    void setAuthor(std::string author_) {
+        this->author = std::move(author_);
     }
 
-    void setVersion(const std::string &version_) {
-        this->version = version_;
+    void setVersion(std::string version_) {
+        this->version = std::move(version_);
     }
 
-    void setLicense(const std::string &license_) {
-        this->license = license_;
+    void setLicense(std::string license_) {
+        this->license = std::move(license_);
     }
 
-    void setBuildTimestamp(const std::string &buildtimestamp_) {
-        this->buildtimestamp = buildtimestamp_;
+    void setBuildTimestamp(std::string buildtimestamp_) {
+        this->buildtimestamp = std::move(buildtimestamp_);
     }
 
-    void setDescription(const std::string &description_) {
-        this->description = description_;
+    void setDescription(std::string description_) {
+        this->description = std::move(description_);
     }
 
-    void setStorageId(const std::string &storageId_) {
-        this->storageId = storageId_;
+    void setStorageId(std::string storageId_) {
+        this->storageId = std::move(storageId_);
     }
 
     void setSize(size_t size_) {

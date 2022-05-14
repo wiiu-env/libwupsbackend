@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2019,2020 Maschell
+ * Copyright (C) 2019-2022 Maschell
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,19 +22,15 @@
 
 class PluginUtils {
 public:
-    static std::optional<PluginMetaInformation> getMetaInformationForBuffer(char *buffer, size_t size);
+    static std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformationForBuffer(char *buffer, size_t size);
 
-    static std::optional<PluginMetaInformation> getMetaInformationForPath(const std::string &path);
+    static std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformationForPath(const std::string &path);
 
-    static std::vector<PluginContainer> getLoadedPlugins(uint32_t maxSize);
+    static std::vector<std::unique_ptr<PluginContainer>> getLoadedPlugins(uint32_t maxSize);
 
-    static std::optional<PluginContainer> getPluginForPath(const std::string &path);
+    static std::optional<std::unique_ptr<PluginContainer>> getPluginForPath(const std::string &path);
 
-    static std::optional<PluginContainer> getPluginForBuffer(char *buffer, size_t size);
+    static std::optional<std::unique_ptr<PluginContainer>> getPluginForBuffer(char *buffer, size_t size);
 
-    static void destroyPluginContainer(PluginContainer &plugin);
-
-    static void destroyPluginContainer(std::vector<PluginContainer> &vector);
-
-    static int32_t LoadAndLinkOnRestart(std::vector<PluginContainer> &plugins);
+    static int32_t LoadAndLinkOnRestart(const std::vector<std::unique_ptr<PluginContainer>> &plugins);
 };

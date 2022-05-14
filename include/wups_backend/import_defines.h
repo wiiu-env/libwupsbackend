@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2019 - 2021 Maschell
+ * Copyright (C) 2019-2022 Maschell
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #pragma once
 
+#include <cstddef>
 #include <stdint.h>
 
 typedef enum GetPluginInformationInputType {
@@ -27,10 +28,10 @@ typedef enum GetPluginInformationInputType {
 typedef uint32_t plugin_container_handle;
 typedef uint32_t plugin_data_handle;
 
-#define PLUGIN_INFORMATION_VERSION 0x00000001
+#define PLUGIN_INFORMATION_VERSION 0x00000002
 
 /* plugin_information message */
-typedef struct __attribute__((__packed__)) plugin_information {
+typedef struct plugin_information {
     uint32_t plugin_information_version;
     char name[256];
     char author[256];

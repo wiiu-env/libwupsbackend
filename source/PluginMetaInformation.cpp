@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (C) 2019,2020 Maschell
+ * Copyright (C) 2019-2022 Maschell
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,20 +21,20 @@
 #include <optional>
 #include <utility>
 
-PluginMetaInformation::PluginMetaInformation(const std::string &name_,
-                                             const std::string &author_,
-                                             const std::string &version_,
-                                             const std::string &license_,
-                                             const std::string &buildtimestamp_,
-                                             const std::string &description_,
-                                             const std::string &storageId_,
-                                             size_t size_) {
-    this->name           = name_;
-    this->author         = author_;
-    this->size           = size_;
-    this->buildtimestamp = buildtimestamp_;
-    this->description    = description_;
-    this->license        = license_;
-    this->version        = version_;
-    this->storageId      = storageId_;
+PluginMetaInformation::PluginMetaInformation(std::string name,
+                                             std::string author,
+                                             std::string version,
+                                             std::string license,
+                                             std::string buildtimestamp,
+                                             std::string description,
+                                             std::string storageId,
+                                             size_t size) {
+    this->name           = std::move(name);
+    this->author         = std::move(author);
+    this->size           = size;
+    this->buildtimestamp = std::move(buildtimestamp);
+    this->description    = std::move(description);
+    this->license        = std::move(license);
+    this->version        = std::move(version);
+    this->storageId      = std::move(storageId);
 }

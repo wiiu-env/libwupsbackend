@@ -13,7 +13,7 @@ include $(DEVKITPRO)/wut/share/wut_rules
 WUPS_ROOT := $(DEVKITPRO)/wups
 
 export VER_MAJOR	:=	1
-export VER_MINOR	:=	1
+export VER_MINOR	:=	2
 export VER_PATCH	:=	0
 
 VERSION	:=	$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)
@@ -30,7 +30,7 @@ BUILD		:=	build
 SOURCES		:=	source
 DATA		:=	data
 INCLUDES	:=	source \
-				include \
+				include
 
 #---------------------------------------------------------------------------------
 # options for code generation
@@ -47,7 +47,6 @@ CXXFLAGS	:= $(CFLAGS) -std=c++20 -fno-exceptions -fno-rtti
 ASFLAGS	:=	$(MACHDEP)
 
 LDFLAGS	=	$(ARCH) -Wl,--gc-sections
-
 
 LIBS	:= 
 
