@@ -1,6 +1,6 @@
-FROM wiiuenv/devkitppc:20220213
+FROM wiiuenv/devkitppc:20220724
 
-COPY --from=wiiuenv/wiiupluginsystem:20210924 /artifacts $DEVKITPRO
+COPY --from=wiiuenv/wiiupluginsystem:20220724 /artifacts $DEVKITPRO
 
 WORKDIR tmp_build
 COPY . .

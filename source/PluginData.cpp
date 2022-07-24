@@ -27,7 +27,7 @@ PluginData::PluginData(uint32_t handle) {
 PluginData::~PluginData() {
     if (handle != 0) {
         if (WUPSDeletePluginData(&handle, 1) != PLUGIN_BACKEND_API_ERROR_NONE) {
-            DEBUG_FUNCTION_LINE_ERR("### ERROR ###: Failed to delete plugin data");
+            DEBUG_FUNCTION_LINE_ERR("Failed to delete plugin data");
         }
     }
 }
