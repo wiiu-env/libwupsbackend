@@ -2,8 +2,12 @@
 #include <coreinit/debug.h>
 #include <cstring>
 
-#define __FILENAME_X__ (strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
-#define __FILENAME__   (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : __FILENAME_X__)
+#define __FILENAME__ ({                            \
+    const char *filename = __FILE__;               \
+    const char *pos      = strrchr(filename, '/'); \
+    if (!pos) pos = strrchr(filename, '\\');       \
+    pos ? pos + 1 : filename;                      \
+})
 
 #define DEBUG_FUNCTION_LINE_ERR(FMT, ARGS...)                                                                                               \
     do {                                                                                                                                    \
