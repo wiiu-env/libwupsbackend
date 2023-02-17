@@ -20,17 +20,19 @@
 #include "PluginMetaInformation.h"
 #include <optional>
 
-class PluginUtils {
-public:
-    static std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformationForBuffer(char *buffer, size_t size);
+namespace WUPSBackend {
+    class PluginUtils {
+    public:
+        static std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformationForBuffer(char *buffer, size_t size);
 
-    static std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformationForPath(const std::string &path);
+        static std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformationForPath(const std::string &path);
 
-    static std::vector<std::unique_ptr<PluginContainer>> getLoadedPlugins(uint32_t maxSize);
+        static std::vector<std::unique_ptr<PluginContainer>> getLoadedPlugins(uint32_t maxSize);
 
-    static std::optional<std::unique_ptr<PluginContainer>> getPluginForPath(const std::string &path);
+        static std::optional<std::unique_ptr<PluginContainer>> getPluginForPath(const std::string &path);
 
-    static std::optional<std::unique_ptr<PluginContainer>> getPluginForBuffer(char *buffer, size_t size);
+        static std::optional<std::unique_ptr<PluginContainer>> getPluginForBuffer(char *buffer, size_t size);
 
-    static int32_t LoadAndLinkOnRestart(const std::vector<std::unique_ptr<PluginContainer>> &plugins);
-};
+        static int32_t LoadAndLinkOnRestart(const std::vector<std::unique_ptr<PluginContainer>> &plugins);
+    };
+} // namespace WUPSBackend

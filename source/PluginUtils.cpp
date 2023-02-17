@@ -22,6 +22,8 @@
 #include <cstring>
 #include <memory>
 
+using namespace WUPSBackend;
+
 std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformation(const plugin_information &info) {
     if (info.plugin_information_version != PLUGIN_INFORMATION_VERSION) {
         DEBUG_FUNCTION_LINE_ERR("Version mismatch");
