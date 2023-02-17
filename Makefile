@@ -115,13 +115,13 @@ install: dist-bin
 	bzip2 -cd libwupsbackend-$(VERSION).tar.bz2 | tar -xf - -C $(DESTDIR)$(DEVKITPRO)/wups
 
 lib:
-	@[ -d $@ ] || mkdir -p $@
+	@$(shell [ ! -d lib ] && mkdir -p lib)
     
 share:
-	@[ -d $@ ] || mkdir -p $@
+	@$(shell [ ! -d 'share' ] && mkdir -p 'share')
 
 release:
-	@[ -d $@ ] || mkdir -p $@
+	@$(shell [ ! -d release ] && mkdir -p release)
     
 share/libwupsbackend.ld : lib/libwupsbackend.a | share release
 	cp $(CURDIR)/release/*.ld $(CURDIR)/$@
