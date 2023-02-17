@@ -28,18 +28,13 @@ namespace WUPSBackend {
     class PluginContainer {
 
     public:
-        PluginContainer(std::shared_ptr<PluginData> data, std::shared_ptr<PluginMetaInformation> metaInfo) : pluginData(std::move(data)),
-                                                                                                             metaInformation(std::move(metaInfo)) {
-        }
+        PluginContainer(std::shared_ptr<PluginData> data, std::shared_ptr<PluginMetaInformation> metaInfo);
 
-        [[nodiscard]] const std::shared_ptr<PluginMetaInformation> &getMetaInformation() const {
-            return this->metaInformation;
-        }
+        [[nodiscard]] const std::shared_ptr<PluginMetaInformation> &getMetaInformation() const;
 
-        [[nodiscard]] const std::shared_ptr<PluginData> &getPluginData() const {
-            return pluginData;
-        }
+        [[nodiscard]] const std::shared_ptr<PluginData> &getPluginData() const;
 
+    private:
         const std::shared_ptr<PluginData> pluginData;
         const std::shared_ptr<PluginMetaInformation> metaInformation;
     };
