@@ -124,7 +124,7 @@ std::optional<std::unique_ptr<PluginContainer>> PluginUtils::getPluginForBuffer(
 std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
     std::vector<std::unique_ptr<PluginContainer>> result;
 
-    auto handles = std::make_unique<plugin_container_handle[]>(maxSize);
+    auto handles = make_unique_nothrow<plugin_container_handle[]>(maxSize);
     if (!handles) {
         DEBUG_FUNCTION_LINE_ERR("Not enough memory");
         return result;
@@ -146,7 +146,7 @@ std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint
         return result;
     }
 
-    auto dataHandles = std::make_unique<plugin_data_handle[]>(realSize);
+    auto dataHandles = make_unique_nothrow<plugin_data_handle[]>(realSize);
     if (!dataHandles) {
         DEBUG_FUNCTION_LINE_ERR("Not enough memory");
         return result;
@@ -157,7 +157,7 @@ std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint
         return result;
     }
 
-    auto information = std::make_unique<plugin_information[]>(realSize);
+    auto information = make_unique_nothrow<plugin_information[]>(realSize);
     if (!information) {
         DEBUG_FUNCTION_LINE_ERR("Not enough memory");
         return result;
