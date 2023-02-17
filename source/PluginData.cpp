@@ -20,6 +20,8 @@
 #include "logger.h"
 #include <coreinit/debug.h>
 
+using namespace WUPSBackend;
+
 PluginData::PluginData(uint32_t handle) {
     this->handle = handle;
 }

@@ -18,8 +18,9 @@
 #include "wups_backend/PluginMetaInformation.h"
 
 #include <cstring>
-#include <optional>
 #include <utility>
+
+using namespace WUPSBackend;
 
 PluginMetaInformation::PluginMetaInformation(std::string name,
                                              std::string author,

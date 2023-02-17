@@ -19,15 +19,17 @@
 #include <cstdint>
 #include <wups_backend/import_defines.h>
 
-class PluginData {
+namespace WUPSBackend {
+    class PluginData {
 
-public:
-    explicit PluginData(uint32_t handle);
-    ~PluginData();
+    public:
+        explicit PluginData(uint32_t handle);
+        ~PluginData();
 
-    [[nodiscard]] uint32_t getHandle() const {
-        return handle;
-    }
+        [[nodiscard]] uint32_t getHandle() const {
+            return handle;
+        }
 
-    uint32_t handle;
-};
+        uint32_t handle;
+    };
+} // namespace WUPSBackend
