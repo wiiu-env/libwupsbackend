@@ -61,22 +61,22 @@ PluginBackendApiErrorType WUPSBackend_InitLibrary() {
         return PLUGIN_BACKEND_API_ERROR_MODULE_NOT_FOUND;
     }
 
-    if (OSDynLoad_FindExport(sModuleHandle, FALSE, "WUPSGetAPIVersion", (void **) &sWUPSGetAPIVersion) != OS_DYNLOAD_OK) {
+    if (OSDynLoad_FindExport(sModuleHandle, OS_DYNLOAD_EXPORT_FUNC, "WUPSGetAPIVersion", (void **) &sWUPSGetAPIVersion) != OS_DYNLOAD_OK) {
         DEBUG_FUNCTION_LINE_ERR("FindExport WUPSGetAPIVersion failed.");
         return PLUGIN_BACKEND_API_ERROR_MODULE_MISSING_EXPORT;
     }
 
-    if (OSDynLoad_FindExport(sModuleHandle, FALSE, "WUPSWillReloadPluginsOnNextLaunch", (void **) &sWUPSWillReloadPluginsOnNextLaunch) != OS_DYNLOAD_OK) {
+    if (OSDynLoad_FindExport(sModuleHandle, OS_DYNLOAD_EXPORT_FUNC, "WUPSWillReloadPluginsOnNextLaunch", (void **) &sWUPSWillReloadPluginsOnNextLaunch) != OS_DYNLOAD_OK) {
         DEBUG_FUNCTION_LINE_WARN("FindExport WUPSWillReloadPluginsOnNextLaunch failed.");
         sWUPSWillReloadPluginsOnNextLaunch = nullptr;
     }
 
-    if (OSDynLoad_FindExport(sModuleHandle, FALSE, "WUPSGetNumberOfLoadedPlugins", (void **) &sWUPSGetNumberOfLoadedPlugins) != OS_DYNLOAD_OK) {
+    if (OSDynLoad_FindExport(sModuleHandle, OS_DYNLOAD_EXPORT_FUNC, "WUPSGetNumberOfLoadedPlugins", (void **) &sWUPSGetNumberOfLoadedPlugins) != OS_DYNLOAD_OK) {
         DEBUG_FUNCTION_LINE_WARN("FindExport WUPSGetNumberOfLoadedPlugins failed.");
         sWUPSGetNumberOfLoadedPlugins = nullptr;
     }
 
-    if (OSDynLoad_FindExport(sModuleHandle, FALSE, "WUPSGetSectionMemoryAddresses", (void **) &sWUPSGetSectionMemoryAddresses) != OS_DYNLOAD_OK) {
+    if (OSDynLoad_FindExport(sModuleHandle, OS_DYNLOAD_EXPORT_FUNC, "WUPSGetSectionMemoryAddresses", (void **) &sWUPSGetSectionMemoryAddresses) != OS_DYNLOAD_OK) {
         DEBUG_FUNCTION_LINE_WARN("FindExport WUPSGetSectionMemoryAddresses failed.");
         sWUPSGetSectionMemoryAddresses = nullptr;
     }
@@ -109,7 +109,7 @@ PluginBackendApiErrorType WUPSBackend_GetApiVersion(WUPSBackendAPIVersion *outVe
             return PLUGIN_BACKEND_API_ERROR_MODULE_NOT_FOUND;
         }
 
-        if (OSDynLoad_FindExport(sModuleHandle, FALSE, "WUPSGetAPIVersion", (void **) &sWUPSGetAPIVersion) != OS_DYNLOAD_OK) {
+        if (OSDynLoad_FindExport(sModuleHandle, OS_DYNLOAD_EXPORT_FUNC, "WUPSGetAPIVersion", (void **) &sWUPSGetAPIVersion) != OS_DYNLOAD_OK) {
             DEBUG_FUNCTION_LINE_WARN("FindExport WUPSGetAPIVersion failed.");
             return PLUGIN_BACKEND_API_ERROR_MODULE_MISSING_EXPORT;
         }
