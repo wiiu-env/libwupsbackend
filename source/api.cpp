@@ -194,7 +194,7 @@ PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByBuffer(plugin_data_handl
     return WUPSLoadPluginAsDataByBuffer(output, buffer, size);
 }
 
-PluginBackendApiErrorType WUPSBackend_WUPSGetPluginMetaInformationByPath(plugin_information *output, const char *path) {
+PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByPath(plugin_information *output, const char *path) {
     return WUPSGetPluginMetaInformationByPath(output, path);
 }
 

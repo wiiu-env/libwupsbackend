@@ -30,7 +30,7 @@ PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByPath(plugin_data_handle 
 
 PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByBuffer(plugin_data_handle *output, char *buffer, size_t size);
 
-PluginBackendApiErrorType WUPSBackend_WUPSGetPluginMetaInformationByPath(plugin_information *output, const char *path);
+PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByPath(plugin_information *output, const char *path);
 
 PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByBuffer(plugin_information *output, char *buffer, size_t size);
 
