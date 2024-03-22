@@ -178,38 +178,53 @@ PluginBackendApiErrorType WUPSBackend_GetSectionMemoryAddresses(plugin_container
     return reinterpret_cast<decltype(&WUPSBackend_GetSectionMemoryAddresses)>(sWUPSGetSectionMemoryAddresses)(handle, textAddress, dataAddress);
 }
 
+#define PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED()                                                                                                                           \
+    do {                                                                                                                                                                                   \
+        if (sWUPSAPIVersion == WUPS_BACKEND_MODULE_API_VERSION_ERROR) { DEBUG_FUNCTION_LINE_WARN("libwupsbackend is not initialized, please make sure to call WUPSBackend_InitLibrary"); } \
+    } while (0)
+
+
 PluginBackendApiErrorType WUPSBackend_LoadAndLinkByDataHandle(const plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size) {
+    PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
     return WUPSLoadAndLinkByDataHandle(plugin_data_handle_list, plugin_data_handle_list_size);
 }
 
 PluginBackendApiErrorType WUPSBackend_DeletePluginData(const plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size) {
+    PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
     return WUPSDeletePluginData(plugin_data_handle_list, plugin_data_handle_list_size);
 }
 
 PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByPath(plugin_data_handle *output, const char *path) {
+    PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
     return WUPSLoadPluginAsDataByPath(output, path);
 }
 
 PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByBuffer(plugin_data_handle *output, char *buffer, size_t size) {
+    PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
     return WUPSLoadPluginAsDataByBuffer(output, buffer, size);
 }
 
 PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByPath(plugin_information *output, const char *path) {
+    PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
     return WUPSGetPluginMetaInformationByPath(output, path);
 }
 
 PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByBuffer(plugin_information *output, char *buffer, size_t size) {
+    PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
     return WUPSGetPluginMetaInformationByBuffer(output, buffer, size);
 }
 
 PluginBackendApiErrorType WUPSBackend_GetPluginDataForContainerHandles(const plugin_container_handle *plugin_container_handle_list, const plugin_data_handle *plugin_data_list, uint32_t buffer_size) {
+    PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
     return WUPSGetPluginDataForContainerHandles(plugin_container_handle_list, plugin_data_list, buffer_size);
 }
 
 PluginBackendApiErrorType WUPSBackend_GetMetaInformation(const plugin_container_handle *plugin_container_handle_list, plugin_information *plugin_information_list, uint32_t buffer_size) {
+    PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
     return WUPSGetMetaInformation(plugin_container_handle_list, plugin_information_list, buffer_size);
 }
 
 PluginBackendApiErrorType WUPSBackend_GetLoadedPlugins(const plugin_container_handle *io_handles, uint32_t buffer_size, uint32_t *outSize, uint32_t *plugin_information_version) {
+    PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
     return WUPSGetLoadedPlugins(io_handles, buffer_size, outSize, plugin_information_version);
 }
