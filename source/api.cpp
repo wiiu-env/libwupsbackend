@@ -186,20 +186,12 @@ PluginBackendApiErrorType WUPSBackend_DeletePluginData(const plugin_data_handle 
     return WUPSDeletePluginData(plugin_data_handle_list, plugin_data_handle_list_size);
 }
 
-PluginBackendApiErrorType WUPSBackend_LoadPluginAsData(GetPluginInformationInputType inputType, const char *path, char *buffer, size_t size, plugin_data_handle *out) {
-    return WUPSLoadPluginAsData(inputType, path, buffer, size, out);
-}
-
 PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByPath(plugin_data_handle *output, const char *path) {
     return WUPSLoadPluginAsDataByPath(output, path);
 }
 
 PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByBuffer(plugin_data_handle *output, char *buffer, size_t size) {
     return WUPSLoadPluginAsDataByBuffer(output, buffer, size);
-}
-
-PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformation(GetPluginInformationInputType inputType, const char *path, char *buffer, size_t size, plugin_information *output) {
-    return WUPSGetPluginMetaInformation(inputType, path, buffer, size, output);
 }
 
 PluginBackendApiErrorType WUPSBackend_WUPSGetPluginMetaInformationByPath(plugin_information *output, const char *path) {

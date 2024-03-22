@@ -26,13 +26,9 @@ PluginBackendApiErrorType WUPSBackend_LoadAndLinkByDataHandle(const plugin_data_
 
 PluginBackendApiErrorType WUPSBackend_DeletePluginData(const plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size);
 
-PluginBackendApiErrorType WUPSBackend_LoadPluginAsData(GetPluginInformationInputType inputType, const char *path, char *buffer, size_t size, plugin_data_handle *out);
-
 PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByPath(plugin_data_handle *output, const char *path);
 
 PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByBuffer(plugin_data_handle *output, char *buffer, size_t size);
-
-PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformation(GetPluginInformationInputType inputType, const char *path, char *buffer, size_t size, plugin_information *output);
 
 PluginBackendApiErrorType WUPSBackend_WUPSGetPluginMetaInformationByPath(plugin_information *output, const char *path);
 
