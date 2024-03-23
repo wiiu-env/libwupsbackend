@@ -22,110 +22,92 @@
 #include <cstring>
 #include <memory>
 
-using namespace WUPSBackend;
+namespace WUPSBackend {
 
-std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformation(const wups_backend_plugin_information &info) {
+const char *GetStatusStr(PluginBackendApiErrorType status) {
+    return WUPSBackend_GetStatusStr(status);
+}
+
+namespace PluginUtils {
+static std::optional<PluginMetaInformation> getMetaInformation(const wups_backend_plugin_information &info, PluginBackendApiErrorType &err) {
     if (info.plugin_information_version != WUPS_BACKEND_PLUGIN_INFORMATION_VERSION) {
+        err = PLUGIN_BACKEND_API_ERROR_UNSUPPORTED_VERSION;
         DEBUG_FUNCTION_LINE_ERR("Version mismatch");
         return {};
     }
-    auto res = make_unique_nothrow<PluginMetaInformation>(info.name,
-                                                          info.author,
-                                                          info.version,
-                                                          info.license,
-                                                          info.buildTimestamp,
-                                                          info.description,
-                                                          info.storageId,
-                                                          info.size);
-    if (!res) {
-        DEBUG_FUNCTION_LINE_ERR("Not enough memory");
-        return {};
-    }
-    return res;
+    return PluginMetaInformation(info.name,
+                                 info.author,
+                                 info.version,
+                                 info.license,
+                                 info.buildTimestamp,
+                                 info.description,
+                                 info.storageId,
+                                 info.size);
 }
 
-std::optional<std::unique_ptr<PluginMetaInformation>> PluginUtils::getMetaInformationForBuffer(char *buffer, size_t size) {
-    wups_backend_plugin_information info;
-    if (WUPSBackend_GetPluginMetaInformationByBuffer(&info, buffer, size) != PLUGIN_BACKEND_API_ERROR_NONE) {
+std::optional<PluginMetaInformation> getMetaInformationForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err) {
+    wups_backend_plugin_information info = {};
+    if ((err = WUPSBackend_GetPluginMetaInformationByBuffer(&info, buffer, size)) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to load meta infos for buffer %08X with size %08X", buffer, size);
         return {};
     }
-
-    return getMetaInformation(info);
+    return getMetaInformation(info, err);
 }
 
-std::optional<std::unique_ptr<PluginMetaInformation>> PluginUtils::getMetaInformationForPath(const std::string &path) {
+std::optional<PluginMetaInformation> getMetaInformationForPath(const std::string &path, PluginBackendApiErrorType &err) {
     wups_backend_plugin_information info = {};
-    if (WUPSBackend_GetPluginMetaInformationByPath(&info, path.c_str()) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if ((err = WUPSBackend_GetPluginMetaInformationByPath(&info, path.c_str())) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to load meta infos for %s", path.c_str());
         return {};
     }
-
-    return getMetaInformation(info);
+    return getMetaInformation(info, err);
 }
 
-std::optional<std::unique_ptr<PluginContainer>> PluginUtils::getPluginForPath(const std::string &path) {
-    auto metaInfoOpt = PluginUtils::getMetaInformationForPath(path);
+std::optional<PluginContainer> getPluginForPath(const std::string &path, PluginBackendApiErrorType &err) {
+    auto metaInfoOpt = getMetaInformationForPath(path, err);
     if (!metaInfoOpt) {
         DEBUG_FUNCTION_LINE_ERR("Failed to get MetaInformation for path %s", path.c_str());
         return {};
     }
 
     wups_backend_plugin_data_handle dataHandle;
-    if (WUPSBackend_LoadPluginAsDataByPath(&dataHandle, path.c_str()) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if ((err = WUPSBackend_LoadPluginAsDataByPath(&dataHandle, path.c_str())) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("WUPSLoadPluginAsDataByPath failed for path %s", path.c_str());
         return {};
     }
 
-    auto pluginData = make_shared_nothrow<PluginData>(dataHandle);
-    if (!pluginData) {
-        DEBUG_FUNCTION_LINE_ERR("Failed to allocate PluginData");
-        return {};
-    }
-
-    auto pluginContainer = make_unique_nothrow<PluginContainer>(std::move(pluginData), std::move(metaInfoOpt.value()));
-    if (!pluginContainer) {
-        DEBUG_FUNCTION_LINE_ERR("Failed to allocate PluginContainer");
-        return {};
-    }
-
-    return pluginContainer;
+    return PluginContainer(PluginData(dataHandle), std::move(metaInfoOpt.value()));
 }
 
-std::optional<std::unique_ptr<PluginContainer>> PluginUtils::getPluginForBuffer(char *buffer, size_t size) {
-    auto metaInfoOpt = PluginUtils::getMetaInformationForBuffer(buffer, size);
+std::optional<PluginContainer> getPluginForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err) {
+    auto metaInfoOpt = getMetaInformationForBuffer(buffer, size, err);
     if (!metaInfoOpt) {
         DEBUG_FUNCTION_LINE_ERR("Failed to get MetaInformation for buffer %08X (%d bytes)", buffer, size);
         return {};
     }
 
     wups_backend_plugin_data_handle dataHandle;
-    if (WUPSBackend_LoadPluginAsDataByBuffer(&dataHandle, buffer, size) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if ((err = WUPSBackend_LoadPluginAsDataByBuffer(&dataHandle, buffer, size)) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("WUPSLoadPluginAsDataByBuffer failed for buffer %08X (%d bytes)", buffer, size);
         return {};
     }
 
-    auto pluginData = make_shared_nothrow<PluginData>(dataHandle);
-    if (!pluginData) {
-        DEBUG_FUNCTION_LINE_ERR("Failed to allocate PluginData");
-        return {};
-    }
-
-    auto pluginContainer = make_unique_nothrow<PluginContainer>(std::move(pluginData), std::move(metaInfoOpt.value()));
-    if (!pluginContainer) {
-        DEBUG_FUNCTION_LINE_ERR("Failed to allocate PluginContainer");
-        return {};
-    }
-
-    return pluginContainer;
+    return PluginContainer(PluginData(dataHandle), std::move(metaInfoOpt.value()));
 }
 
+std::vector<PluginContainer> getLoadedPlugins(PluginBackendApiErrorType &err) {
+    std::vector<PluginContainer> result;
 
-std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
-    std::vector<std::unique_ptr<PluginContainer>> result;
+    PluginBackendApiErrorType err2;
+    uint32_t maxSize;
+    if ((err2 = WUPSBackend_GetNumberOfLoadedPlugins(&maxSize)) != PLUGIN_BACKEND_API_ERROR_NONE) {
+        DEBUG_FUNCTION_LINE_WARN("Failed to get number of loaded plugins: %s", WUPSBackend_GetStatusStr(err2));
+        maxSize = 120;
+    }
 
     auto handles = make_unique_nothrow<wups_backend_plugin_container_handle[]>(maxSize);
     if (!handles) {
+        err = PLUGIN_BACKEND_API_ERROR_FAILED_ALLOC;
         DEBUG_FUNCTION_LINE_ERR("Not enough memory");
         return result;
     }
@@ -136,87 +118,76 @@ std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint
     }
 
     uint32_t plugin_information_version = 0;
-
-    if (WUPSBackend_GetLoadedPlugins(handles.get(), maxSize, &realSize, &plugin_information_version) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if ((err = WUPSBackend_GetLoadedPlugins(handles.get(), maxSize, &realSize, &plugin_information_version)) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("WUPSGetLoadedPlugins: Failed");
         return result;
     }
     if (realSize == 0 || plugin_information_version != WUPS_BACKEND_PLUGIN_INFORMATION_VERSION) {
+        err = PLUGIN_BACKEND_API_ERROR_UNSUPPORTED_VERSION;
         DEBUG_FUNCTION_LINE_ERR("realSize is 0 or version mismatch");
         return result;
     }
 
     auto dataHandles = make_unique_nothrow<wups_backend_plugin_data_handle[]>(realSize);
     if (!dataHandles) {
+        err = PLUGIN_BACKEND_API_ERROR_FAILED_ALLOC;
         DEBUG_FUNCTION_LINE_ERR("Not enough memory");
         return result;
     }
 
-    if (WUPSBackend_GetPluginDataForContainerHandles(handles.get(), dataHandles.get(), realSize) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if ((err = WUPSBackend_GetPluginDataForContainerHandles(handles.get(), dataHandles.get(), realSize)) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to get plugin data");
         return result;
     }
 
     auto information = make_unique_nothrow<wups_backend_plugin_information[]>(realSize);
     if (!information) {
+        err = PLUGIN_BACKEND_API_ERROR_FAILED_ALLOC;
         DEBUG_FUNCTION_LINE_ERR("Not enough memory");
         return result;
     }
-    if (WUPSBackend_GetMetaInformation(handles.get(), information.get(), realSize) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if ((err = WUPSBackend_GetMetaInformation(handles.get(), information.get(), realSize)) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to get meta information for handles");
         return result;
     }
 
     for (uint32_t i = 0; i < realSize; i++) {
         if (information[i].plugin_information_version != WUPS_BACKEND_PLUGIN_INFORMATION_VERSION) {
+            err = PLUGIN_BACKEND_API_ERROR_UNSUPPORTED_VERSION;
             DEBUG_FUNCTION_LINE_ERR("Skip, wrong struct version.");
-            continue;
+            return {};
         }
-        auto metaInfo = make_shared_nothrow<PluginMetaInformation>(information[i].name,
-                                                                   information[i].author,
-                                                                   information[i].version,
-                                                                   information[i].license,
-                                                                   information[i].buildTimestamp,
-                                                                   information[i].description,
-                                                                   information[i].storageId,
-                                                                   information[i].size);
-
-        if (!metaInfo) {
-            DEBUG_FUNCTION_LINE_ERR("Skip, failed to allocate MetaInformation");
-            continue;
-        }
-
-        auto pluginData = std::make_shared<PluginData>((uint32_t) dataHandles[i]);
-        if (!pluginData) {
-            DEBUG_FUNCTION_LINE_ERR("Skip, failed to allocate PluginData");
-            continue;
-        }
-
-        auto pluginContainer = make_unique_nothrow<PluginContainer>(std::move(pluginData), std::move(metaInfo));
-        if (!pluginContainer) {
-            DEBUG_FUNCTION_LINE_ERR("Skip, failed to allocate PluginContainer");
-            continue;
-        }
-
-        result.push_back(std::move(pluginContainer));
+        result.emplace_back(PluginData(dataHandles[i]), PluginMetaInformation(information[i].name,
+                                                                              information[i].author,
+                                                                              information[i].version,
+                                                                              information[i].license,
+                                                                              information[i].buildTimestamp,
+                                                                              information[i].description,
+                                                                              information[i].storageId,
+                                                                              information[i].size));
     }
 
     return result;
 }
 
-int32_t PluginUtils::LoadAndLinkOnRestart(const std::vector<std::unique_ptr<PluginContainer>> &plugins) {
+PluginBackendApiErrorType LoadAndLinkOnRestart(const std::vector<PluginContainer> &plugins) {
     uint32_t dataSize = plugins.size();
-    wups_backend_plugin_data_handle handles[dataSize];
+    auto handles      = make_unique_nothrow<wups_backend_plugin_data_handle[]>(dataSize);
+    if (!handles) {
+        return PLUGIN_BACKEND_API_ERROR_FAILED_ALLOC;
+    }
     int i = 0;
-    for (auto &plugin : plugins) {
-        const wups_backend_plugin_data_handle &handle = plugin->getPluginData()->getHandle();
+    for (const auto &plugin : plugins) {
+        const auto &handle = plugin.getPluginData().getHandle();
         if (handle == 0) {
-            dataSize--;
+            return PLUGIN_BACKEND_API_INVALID_HANDLE;
         } else {
             handles[i] = handle;
             i++;
         }
     }
 
-    return WUPSBackend_LoadAndLinkByDataHandle(handles, dataSize);
+    return WUPSBackend_LoadAndLinkByDataHandle(handles.get(), dataSize);
 }
+} // namespace PluginUtils
+} // namespace WUPSBackend
