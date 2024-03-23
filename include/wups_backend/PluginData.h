@@ -20,16 +20,22 @@
 #include <wups_backend/import_defines.h>
 
 namespace WUPSBackend {
-    class PluginData {
+class PluginData {
 
-    public:
-        explicit PluginData(uint32_t handle);
-        ~PluginData();
+public:
+    explicit PluginData(uint32_t handle);
 
-        [[nodiscard]] uint32_t getHandle() const {
-            return handle;
-        }
+    PluginData(const PluginData &) = delete;
 
-        uint32_t handle;
-    };
+    PluginData(PluginData &&src) noexcept;
+
+    ~PluginData();
+
+    PluginData &operator=(PluginData &&src) noexcept;
+
+    [[nodiscard]] uint32_t getHandle() const;
+
+private:
+    uint32_t mHandle;
+};
 } // namespace WUPSBackend

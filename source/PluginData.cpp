@@ -23,13 +23,29 @@
 using namespace WUPSBackend;
 
 PluginData::PluginData(uint32_t handle) {
-    this->handle = handle;
+    this->mHandle = handle;
+}
+
+PluginData::PluginData(PluginData &&src) noexcept : mHandle(src.mHandle) {
+    src.mHandle = {};
 }
 
 PluginData::~PluginData() {
-    if (handle != 0) {
-        if (WUPSBackend_DeletePluginData(&handle, 1) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if (mHandle != 0) {
+        if (WUPSBackend_DeletePluginData(&mHandle, 1) != PLUGIN_BACKEND_API_ERROR_NONE) {
             DEBUG_FUNCTION_LINE_ERR("Failed to delete plugin data");
         }
     }
+}
+
+PluginData &PluginData::operator=(PluginData &&src) noexcept {
+    if (this != &src) {
+        this->mHandle = src.mHandle;
+        src.mHandle   = {};
+    }
+    return *this;
+}
+
+uint32_t PluginData::getHandle() const {
+    return mHandle;
 }
