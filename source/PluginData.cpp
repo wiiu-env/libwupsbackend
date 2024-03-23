@@ -16,8 +16,8 @@
  ****************************************************************************/
 
 #include "wups_backend/PluginData.h"
-#include "imports.h"
 #include "logger.h"
+#include "wups_backend/api.h"
 #include <coreinit/debug.h>
 
 using namespace WUPSBackend;
@@ -28,7 +28,7 @@ PluginData::PluginData(uint32_t handle) {
 
 PluginData::~PluginData() {
     if (handle != 0) {
-        if (WUPSDeletePluginData(&handle, 1) != PLUGIN_BACKEND_API_ERROR_NONE) {
+        if (WUPSBackend_DeletePluginData(&handle, 1) != PLUGIN_BACKEND_API_ERROR_NONE) {
             DEBUG_FUNCTION_LINE_ERR("Failed to delete plugin data");
         }
     }
