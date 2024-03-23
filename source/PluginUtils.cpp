@@ -16,9 +16,9 @@
  ****************************************************************************/
 
 #include "wups_backend/PluginUtils.h"
-#include "imports.h"
 #include "logger.h"
 #include "utils.h"
+#include "wups_backend/api.h"
 #include <cstring>
 #include <memory>
 
@@ -46,7 +46,7 @@ std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformation(const w
 
 std::optional<std::unique_ptr<PluginMetaInformation>> PluginUtils::getMetaInformationForBuffer(char *buffer, size_t size) {
     wups_backend_plugin_information info;
-    if (WUPSGetPluginMetaInformationByBuffer(&info, buffer, size) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if (WUPSBackend_GetPluginMetaInformationByBuffer(&info, buffer, size) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to load meta infos for buffer %08X with size %08X", buffer, size);
         return {};
     }
@@ -56,7 +56,7 @@ std::optional<std::unique_ptr<PluginMetaInformation>> PluginUtils::getMetaInform
 
 std::optional<std::unique_ptr<PluginMetaInformation>> PluginUtils::getMetaInformationForPath(const std::string &path) {
     wups_backend_plugin_information info = {};
-    if (WUPSGetPluginMetaInformationByPath(&info, path.c_str()) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if (WUPSBackend_GetPluginMetaInformationByPath(&info, path.c_str()) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to load meta infos for %s", path.c_str());
         return {};
     }
@@ -72,7 +72,7 @@ std::optional<std::unique_ptr<PluginContainer>> PluginUtils::getPluginForPath(co
     }
 
     wups_backend_plugin_data_handle dataHandle;
-    if (WUPSLoadPluginAsDataByPath(&dataHandle, path.c_str()) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if (WUPSBackend_LoadPluginAsDataByPath(&dataHandle, path.c_str()) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("WUPSLoadPluginAsDataByPath failed for path %s", path.c_str());
         return {};
     }
@@ -100,7 +100,7 @@ std::optional<std::unique_ptr<PluginContainer>> PluginUtils::getPluginForBuffer(
     }
 
     wups_backend_plugin_data_handle dataHandle;
-    if (WUPSLoadPluginAsDataByBuffer(&dataHandle, buffer, size) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if (WUPSBackend_LoadPluginAsDataByBuffer(&dataHandle, buffer, size) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("WUPSLoadPluginAsDataByBuffer failed for buffer %08X (%d bytes)", buffer, size);
         return {};
     }
@@ -137,7 +137,7 @@ std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint
 
     uint32_t plugin_information_version = 0;
 
-    if (WUPSGetLoadedPlugins(handles.get(), maxSize, &realSize, &plugin_information_version) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if (WUPSBackend_GetLoadedPlugins(handles.get(), maxSize, &realSize, &plugin_information_version) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("WUPSGetLoadedPlugins: Failed");
         return result;
     }
@@ -152,7 +152,7 @@ std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint
         return result;
     }
 
-    if (WUPSGetPluginDataForContainerHandles(handles.get(), dataHandles.get(), realSize) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if (WUPSBackend_GetPluginDataForContainerHandles(handles.get(), dataHandles.get(), realSize) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to get plugin data");
         return result;
     }
@@ -162,7 +162,7 @@ std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint
         DEBUG_FUNCTION_LINE_ERR("Not enough memory");
         return result;
     }
-    if (WUPSGetMetaInformation(handles.get(), information.get(), realSize) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if (WUPSBackend_GetMetaInformation(handles.get(), information.get(), realSize) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to get meta information for handles");
         return result;
     }
@@ -218,5 +218,5 @@ int32_t PluginUtils::LoadAndLinkOnRestart(const std::vector<std::unique_ptr<Plug
         }
     }
 
-    return WUPSLoadAndLinkByDataHandle(handles, dataSize);
+    return WUPSBackend_LoadAndLinkByDataHandle(handles, dataSize);
 }
