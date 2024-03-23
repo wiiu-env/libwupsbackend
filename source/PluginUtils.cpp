@@ -24,8 +24,8 @@
 
 using namespace WUPSBackend;
 
-std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformation(const plugin_information &info) {
-    if (info.plugin_information_version != PLUGIN_INFORMATION_VERSION) {
+std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformation(const wups_backend_plugin_information &info) {
+    if (info.plugin_information_version != WUPS_BACKEND_PLUGIN_INFORMATION_VERSION) {
         DEBUG_FUNCTION_LINE_ERR("Version mismatch");
         return {};
     }
@@ -45,7 +45,7 @@ std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformation(const p
 }
 
 std::optional<std::unique_ptr<PluginMetaInformation>> PluginUtils::getMetaInformationForBuffer(char *buffer, size_t size) {
-    plugin_information info = {};
+    wups_backend_plugin_information info;
     if (WUPSGetPluginMetaInformationByBuffer(&info, buffer, size) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to load meta infos for buffer %08X with size %08X", buffer, size);
         return {};
@@ -55,7 +55,7 @@ std::optional<std::unique_ptr<PluginMetaInformation>> PluginUtils::getMetaInform
 }
 
 std::optional<std::unique_ptr<PluginMetaInformation>> PluginUtils::getMetaInformationForPath(const std::string &path) {
-    plugin_information info = {};
+    wups_backend_plugin_information info = {};
     if (WUPSGetPluginMetaInformationByPath(&info, path.c_str()) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to load meta infos for %s", path.c_str());
         return {};
@@ -71,7 +71,7 @@ std::optional<std::unique_ptr<PluginContainer>> PluginUtils::getPluginForPath(co
         return {};
     }
 
-    plugin_data_handle dataHandle;
+    wups_backend_plugin_data_handle dataHandle;
     if (WUPSLoadPluginAsDataByPath(&dataHandle, path.c_str()) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("WUPSLoadPluginAsDataByPath failed for path %s", path.c_str());
         return {};
@@ -99,7 +99,7 @@ std::optional<std::unique_ptr<PluginContainer>> PluginUtils::getPluginForBuffer(
         return {};
     }
 
-    plugin_data_handle dataHandle;
+    wups_backend_plugin_data_handle dataHandle;
     if (WUPSLoadPluginAsDataByBuffer(&dataHandle, buffer, size) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("WUPSLoadPluginAsDataByBuffer failed for buffer %08X (%d bytes)", buffer, size);
         return {};
@@ -124,7 +124,7 @@ std::optional<std::unique_ptr<PluginContainer>> PluginUtils::getPluginForBuffer(
 std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint32_t maxSize) {
     std::vector<std::unique_ptr<PluginContainer>> result;
 
-    auto handles = make_unique_nothrow<plugin_container_handle[]>(maxSize);
+    auto handles = make_unique_nothrow<wups_backend_plugin_container_handle[]>(maxSize);
     if (!handles) {
         DEBUG_FUNCTION_LINE_ERR("Not enough memory");
         return result;
@@ -141,12 +141,12 @@ std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint
         DEBUG_FUNCTION_LINE_ERR("WUPSGetLoadedPlugins: Failed");
         return result;
     }
-    if (realSize == 0 || plugin_information_version != PLUGIN_INFORMATION_VERSION) {
+    if (realSize == 0 || plugin_information_version != WUPS_BACKEND_PLUGIN_INFORMATION_VERSION) {
         DEBUG_FUNCTION_LINE_ERR("realSize is 0 or version mismatch");
         return result;
     }
 
-    auto dataHandles = make_unique_nothrow<plugin_data_handle[]>(realSize);
+    auto dataHandles = make_unique_nothrow<wups_backend_plugin_data_handle[]>(realSize);
     if (!dataHandles) {
         DEBUG_FUNCTION_LINE_ERR("Not enough memory");
         return result;
@@ -157,7 +157,7 @@ std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint
         return result;
     }
 
-    auto information = make_unique_nothrow<plugin_information[]>(realSize);
+    auto information = make_unique_nothrow<wups_backend_plugin_information[]>(realSize);
     if (!information) {
         DEBUG_FUNCTION_LINE_ERR("Not enough memory");
         return result;
@@ -168,7 +168,7 @@ std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint
     }
 
     for (uint32_t i = 0; i < realSize; i++) {
-        if (information[i].plugin_information_version != PLUGIN_INFORMATION_VERSION) {
+        if (information[i].plugin_information_version != WUPS_BACKEND_PLUGIN_INFORMATION_VERSION) {
             DEBUG_FUNCTION_LINE_ERR("Skip, wrong struct version.");
             continue;
         }
@@ -206,10 +206,10 @@ std::vector<std::unique_ptr<PluginContainer>> PluginUtils::getLoadedPlugins(uint
 
 int32_t PluginUtils::LoadAndLinkOnRestart(const std::vector<std::unique_ptr<PluginContainer>> &plugins) {
     uint32_t dataSize = plugins.size();
-    plugin_data_handle handles[dataSize];
+    wups_backend_plugin_data_handle handles[dataSize];
     int i = 0;
     for (auto &plugin : plugins) {
-        plugin_data_handle handle = plugin->getPluginData()->getHandle();
+        const wups_backend_plugin_data_handle &handle = plugin->getPluginData()->getHandle();
         if (handle == 0) {
             dataSize--;
         } else {

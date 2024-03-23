@@ -23,23 +23,23 @@
 extern "C" {
 #endif
 
-extern PluginBackendApiErrorType WUPSLoadAndLinkByDataHandle(const plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size);
+extern PluginBackendApiErrorType WUPSLoadAndLinkByDataHandle(const wups_backend_plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size);
 
-extern PluginBackendApiErrorType WUPSDeletePluginData(const plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size);
+extern PluginBackendApiErrorType WUPSDeletePluginData(const wups_backend_plugin_data_handle *plugin_data_handle_list, uint32_t plugin_data_handle_list_size);
 
-extern PluginBackendApiErrorType WUPSLoadPluginAsDataByPath(plugin_data_handle *output, const char *path);
+extern PluginBackendApiErrorType WUPSLoadPluginAsDataByPath(wups_backend_plugin_data_handle *output, const char *path);
 
-extern PluginBackendApiErrorType WUPSLoadPluginAsDataByBuffer(plugin_data_handle *output, char *buffer, size_t size);
+extern PluginBackendApiErrorType WUPSLoadPluginAsDataByBuffer(wups_backend_plugin_data_handle *output, char *buffer, size_t size);
 
-extern PluginBackendApiErrorType WUPSGetPluginMetaInformationByPath(plugin_information *output, const char *path);
+extern PluginBackendApiErrorType WUPSGetPluginMetaInformationByPath(wups_backend_plugin_information *output, const char *path);
 
-extern PluginBackendApiErrorType WUPSGetPluginMetaInformationByBuffer(plugin_information *output, char *buffer, size_t size);
+extern PluginBackendApiErrorType WUPSGetPluginMetaInformationByBuffer(wups_backend_plugin_information *output, char *buffer, size_t size);
 
-extern PluginBackendApiErrorType WUPSGetPluginDataForContainerHandles(const plugin_container_handle *plugin_container_handle_list, const plugin_data_handle *plugin_data_list, uint32_t buffer_size);
+extern PluginBackendApiErrorType WUPSGetPluginDataForContainerHandles(const wups_backend_plugin_container_handle *plugin_container_handle_list, const wups_backend_plugin_data_handle *plugin_data_list, uint32_t buffer_size);
 
-extern PluginBackendApiErrorType WUPSGetMetaInformation(const plugin_container_handle *plugin_container_handle_list, plugin_information *plugin_information_list, uint32_t buffer_size);
+extern PluginBackendApiErrorType WUPSGetMetaInformation(const wups_backend_plugin_container_handle *plugin_container_handle_list, wups_backend_plugin_information *plugin_information_list, uint32_t buffer_size);
 
-extern PluginBackendApiErrorType WUPSGetLoadedPlugins(const plugin_container_handle *io_handles, uint32_t buffer_size, uint32_t *outSize, uint32_t *plugin_information_version);
+extern PluginBackendApiErrorType WUPSGetLoadedPlugins(const wups_backend_plugin_container_handle *io_handles, uint32_t buffer_size, uint32_t *outSize, uint32_t *plugin_information_version);
 
 #ifdef __cplusplus
 }

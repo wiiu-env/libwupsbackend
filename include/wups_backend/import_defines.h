@@ -20,22 +20,22 @@
 #include <stddef.h>
 #include <stdint.h>
 
-typedef enum GetPluginInformationInputType {
+typedef enum WUPSBackendGetPluginInformationInputType {
     PLUGIN_INFORMATION_INPUT_TYPE_PATH   = 0,
     PLUGIN_INFORMATION_INPUT_TYPE_BUFFER = 1,
-} GetPluginInformationInputType;
+} WUPSBackendGetPluginInformationInputType;
 
-typedef uint32_t plugin_container_handle;
-typedef uint32_t plugin_data_handle;
+typedef uint32_t wups_backend_plugin_container_handle;
+typedef uint32_t wups_backend_plugin_data_handle;
 typedef uint32_t WUPSBackendAPIVersion;
 
-#define WUPS_BACKEND_MODULE_API_VERSION       0x00000002
-#define WUPS_BACKEND_MODULE_API_VERSION_ERROR 0xFFFFFFFF
+#define WUPS_BACKEND_MODULE_API_VERSION         0x00000002
+#define WUPS_BACKEND_MODULE_API_VERSION_ERROR   0xFFFFFFFF
 
-#define PLUGIN_INFORMATION_VERSION            0x00000002
+#define WUPS_BACKEND_PLUGIN_INFORMATION_VERSION 0x00000002
 
 /* plugin_information message */
-typedef struct plugin_information {
+typedef struct wups_backend_plugin_information {
     uint32_t plugin_information_version;
     char name[256];
     char author[256];
@@ -45,16 +45,16 @@ typedef struct plugin_information {
     char version[256];
     char storageId[256];
     size_t size;
-} plugin_information;
+} wups_backend_plugin_information;
 
-#define PLUGIN_SECTION_INFORMATION_VERSION 0x00000001
+#define WUPS_BACKEND_PLUGIN_SECTION_INFORMATION_VERSION 0x00000001
 
-typedef struct plugin_section_info {
+typedef struct wups_backend_plugin_section_info {
     uint32_t plugin_section_info_version;
     char name[32];
     void *address;
     uint32_t size;
-} plugin_section_info;
+} wups_backend_plugin_section_info;
 
 typedef enum PluginBackendApiErrorType {
     PLUGIN_BACKEND_API_ERROR_NONE                  = 0,
