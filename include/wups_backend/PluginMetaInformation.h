@@ -22,91 +22,59 @@
 #include <vector>
 
 namespace WUPSBackend {
-    class PluginMetaInformation {
-    public:
-        [[nodiscard]] const std::string &getName() const {
-            return name;
-        }
+class PluginMetaInformation {
+public:
+    [[nodiscard]] const std::string &getName() const {
+        return name;
+    }
 
-        [[nodiscard]] const std::string &getAuthor() const {
-            return this->author;
-        }
+    [[nodiscard]] const std::string &getAuthor() const {
+        return this->author;
+    }
 
-        [[nodiscard]] const std::string &getVersion() const {
-            return this->version;
-        }
+    [[nodiscard]] const std::string &getVersion() const {
+        return this->version;
+    }
 
-        [[nodiscard]] const std::string &getLicense() const {
-            return this->license;
-        }
+    [[nodiscard]] const std::string &getLicense() const {
+        return this->license;
+    }
 
-        [[nodiscard]] const std::string &getBuildTimestamp() const {
-            return this->buildtimestamp;
-        }
+    [[nodiscard]] const std::string &getBuildTimestamp() const {
+        return this->buildtimestamp;
+    }
 
-        [[nodiscard]] const std::string &getDescription() const {
-            return this->description;
-        }
+    [[nodiscard]] const std::string &getDescription() const {
+        return this->description;
+    }
 
-        [[nodiscard]] const std::string &getStorageId() const {
-            return this->storageId;
-        }
+    [[nodiscard]] const std::string &getStorageId() const {
+        return this->storageId;
+    }
 
-        [[nodiscard]] size_t getSize() const {
-            return this->size;
-        }
+    [[nodiscard]] size_t getSize() const {
+        return this->size;
+    }
 
-        PluginMetaInformation(std::string name,
-                              std::string author,
-                              std::string version,
-                              std::string license,
-                              std::string buildtimestamp,
-                              std::string description,
-                              std::string storageId,
-                              size_t size);
+    PluginMetaInformation(std::string_view name,
+                          std::string_view author,
+                          std::string_view version,
+                          std::string_view license,
+                          std::string_view buildtimestamp,
+                          std::string_view description,
+                          std::string_view storageId,
+                          size_t size);
 
-    private:
-        PluginMetaInformation() = default;
+private:
+    PluginMetaInformation() = default;
 
-        void setName(std::string name_) {
-            this->name = std::move(name_);
-        }
-
-        void setAuthor(std::string author_) {
-            this->author = std::move(author_);
-        }
-
-        void setVersion(std::string version_) {
-            this->version = std::move(version_);
-        }
-
-        void setLicense(std::string license_) {
-            this->license = std::move(license_);
-        }
-
-        void setBuildTimestamp(std::string buildtimestamp_) {
-            this->buildtimestamp = std::move(buildtimestamp_);
-        }
-
-        void setDescription(std::string description_) {
-            this->description = std::move(description_);
-        }
-
-        void setStorageId(std::string storageId_) {
-            this->storageId = std::move(storageId_);
-        }
-
-        void setSize(size_t size_) {
-            this->size = size_;
-        }
-
-        std::string name;
-        std::string author;
-        std::string version;
-        std::string license;
-        std::string buildtimestamp;
-        std::string description;
-        std::string storageId;
-        size_t size{};
-    };
+    std::string name;
+    std::string author;
+    std::string version;
+    std::string license;
+    std::string buildtimestamp;
+    std::string description;
+    std::string storageId;
+    size_t size{};
+};
 } // namespace WUPSBackend

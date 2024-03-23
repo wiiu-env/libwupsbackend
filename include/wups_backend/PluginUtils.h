@@ -21,18 +21,22 @@
 #include <optional>
 
 namespace WUPSBackend {
-    class PluginUtils {
-    public:
-        static std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformationForBuffer(char *buffer, size_t size);
 
-        static std::optional<std::unique_ptr<PluginMetaInformation>> getMetaInformationForPath(const std::string &path);
+const char *GetStatusStr(PluginBackendApiErrorType err);
 
-        static std::vector<std::unique_ptr<PluginContainer>> getLoadedPlugins(uint32_t maxSize);
+namespace PluginUtils {
 
-        static std::optional<std::unique_ptr<PluginContainer>> getPluginForPath(const std::string &path);
+std::optional<PluginMetaInformation> getMetaInformationForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err);
 
-        static std::optional<std::unique_ptr<PluginContainer>> getPluginForBuffer(char *buffer, size_t size);
+std::optional<PluginMetaInformation> getMetaInformationForPath(const std::string &path, PluginBackendApiErrorType &err);
 
-        static int32_t LoadAndLinkOnRestart(const std::vector<std::unique_ptr<PluginContainer>> &plugins);
-    };
+std::vector<PluginContainer> getLoadedPlugins(PluginBackendApiErrorType &err);
+
+std::optional<PluginContainer> getPluginForPath(const std::string &path, PluginBackendApiErrorType &err);
+
+std::optional<PluginContainer> getPluginForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err);
+
+PluginBackendApiErrorType LoadAndLinkOnRestart(const std::vector<PluginContainer> &plugins);
+
+} // namespace PluginUtils
 } // namespace WUPSBackend

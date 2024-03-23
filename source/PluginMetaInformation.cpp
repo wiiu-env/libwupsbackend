@@ -22,20 +22,20 @@
 
 using namespace WUPSBackend;
 
-PluginMetaInformation::PluginMetaInformation(std::string name,
-                                             std::string author,
-                                             std::string version,
-                                             std::string license,
-                                             std::string buildtimestamp,
-                                             std::string description,
-                                             std::string storageId,
+PluginMetaInformation::PluginMetaInformation(std::string_view name,
+                                             std::string_view author,
+                                             std::string_view version,
+                                             std::string_view license,
+                                             std::string_view buildtimestamp,
+                                             std::string_view description,
+                                             std::string_view storageId,
                                              size_t size) {
-    this->name           = std::move(name);
-    this->author         = std::move(author);
+    this->name           = name;
+    this->author         = author;
     this->size           = size;
-    this->buildtimestamp = std::move(buildtimestamp);
-    this->description    = std::move(description);
-    this->license        = std::move(license);
-    this->version        = std::move(version);
-    this->storageId      = std::move(storageId);
+    this->buildtimestamp = buildtimestamp;
+    this->description    = description;
+    this->license        = license;
+    this->version        = version;
+    this->storageId      = storageId;
 }
