@@ -3,14 +3,32 @@ on:
   push:
     branches:
       - main
+      - '*-dev'
 
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
+  clang-format-lib:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: clang-format
+      run: |
+        docker run --rm -v ${PWD}:/src ghcr.io/wiiu-env/clang-format:13.0.0-2 -r ./include ./source
+  build-lib:
+    runs-on: ubuntu-22.04
+    needs: clang-format-lib
+    steps:
+    - uses: actions/checkout@v3
+    - name: build binary
+      run: |
+        docker build . -f Dockerfile.buildlocal -t builder
+        docker run --rm -v ${PWD}:/project builder make
   build-and-push-image:
     runs-on: ubuntu-latest
+    needs: [build-lib]
     permissions:
       contents: read
       packages: write
@@ -24,9 +42,10 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value={{date 'YYYYMMDD'}}-{{sha}}
-            type=raw,value={{date 'YYYYMMDD'}}
-            type=raw,value=latest
+            type=raw,value={{branch}}-{{date 'YYYYMMDD'}}-{{sha}},enable=${{ github.ref != format('refs/heads/{0}', 'main') }}
+            type=raw,value={{date 'YYYYMMDD'}}-{{sha}},enable={{is_default_branch}}
+            type=raw,value={{date 'YYYYMMDD'}},enable={{is_default_branch}}
+            type=raw,value=latest,enable={{is_default_branch}}
 
       - name: Log into registry ${{ env.REGISTRY }}
         uses: docker/login-action@v2.1.0
