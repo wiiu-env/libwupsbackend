@@ -30,9 +30,9 @@ PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByPath(wups_backend_plugin
 
 PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByBuffer(wups_backend_plugin_data_handle *output, char *buffer, size_t size);
 
-PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByPath(wups_backend_plugin_information *output, const char *path);
+PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByPath(wups_backend_plugin_information *output, const char *path, PluginBackendPluginParseError *errOut);
 
-PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByBuffer(wups_backend_plugin_information *output, char *buffer, size_t size);
+PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByBuffer(wups_backend_plugin_information *output, char *buffer, size_t size, PluginBackendPluginParseError *errOut);
 
 PluginBackendApiErrorType WUPSBackend_GetPluginDataForContainerHandles(const wups_backend_plugin_container_handle *plugin_container_handle_list, const wups_backend_plugin_data_handle *plugin_data_list, uint32_t buffer_size);
 

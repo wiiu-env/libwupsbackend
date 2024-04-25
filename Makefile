@@ -13,7 +13,7 @@ include $(DEVKITPRO)/wut/share/wut_rules
 WUPS_ROOT := $(DEVKITPRO)/wups
 
 export VER_MAJOR	:=	1
-export VER_MINOR	:=	2
+export VER_MINOR	:=	3
 export VER_PATCH	:=	0
 
 VERSION	:=	$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)

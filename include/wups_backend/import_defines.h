@@ -69,3 +69,9 @@ typedef enum PluginBackendApiErrorType {
     PLUGIN_BACKEND_API_ERROR_LIB_UNINITIALIZED     = 0xFFFFFFF7,
     PLUGIN_BACKEND_API_ERROR_UNSUPPORTED_COMMAND   = 0xFFFFFFF6,
 } PluginBackendApiErrorType;
+
+typedef enum PluginBackendPluginParseError {
+    PLUGIN_BACKEND_PLUGIN_PARSE_ERROR_NONE                 = 0,
+    PLUGIN_BACKEND_PLUGIN_PARSE_ERROR_UNKNOWN              = -1,
+    PLUGIN_BACKEND_PLUGIN_PARSE_ERROR_INCOMPATIBLE_VERSION = -2,
+} PluginBackendPluginParseError;
