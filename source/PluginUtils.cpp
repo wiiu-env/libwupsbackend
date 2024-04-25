@@ -45,26 +45,26 @@ static std::optional<PluginMetaInformation> getMetaInformation(const wups_backen
                                  info.size);
 }
 
-std::optional<PluginMetaInformation> getMetaInformationForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err) {
+std::optional<PluginMetaInformation> getMetaInformationForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err, PluginBackendPluginParseError &parseErr) {
     wups_backend_plugin_information info = {};
-    if ((err = WUPSBackend_GetPluginMetaInformationByBuffer(&info, buffer, size)) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if ((err = WUPSBackend_GetPluginMetaInformationByBuffer(&info, buffer, size, &parseErr)) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to load meta infos for buffer %08X with size %08X", buffer, size);
         return {};
     }
     return getMetaInformation(info, err);
 }
 
-std::optional<PluginMetaInformation> getMetaInformationForPath(const std::string &path, PluginBackendApiErrorType &err) {
+std::optional<PluginMetaInformation> getMetaInformationForPath(const std::string &path, PluginBackendApiErrorType &err, PluginBackendPluginParseError &parseErr) {
     wups_backend_plugin_information info = {};
-    if ((err = WUPSBackend_GetPluginMetaInformationByPath(&info, path.c_str())) != PLUGIN_BACKEND_API_ERROR_NONE) {
+    if ((err = WUPSBackend_GetPluginMetaInformationByPath(&info, path.c_str(), &parseErr)) != PLUGIN_BACKEND_API_ERROR_NONE) {
         DEBUG_FUNCTION_LINE_ERR("Failed to load meta infos for %s", path.c_str());
         return {};
     }
     return getMetaInformation(info, err);
 }
 
-std::optional<PluginContainer> getPluginForPath(const std::string &path, PluginBackendApiErrorType &err) {
-    auto metaInfoOpt = getMetaInformationForPath(path, err);
+std::optional<PluginContainer> getPluginForPath(const std::string &path, PluginBackendApiErrorType &err, PluginBackendPluginParseError &parseErr) {
+    auto metaInfoOpt = getMetaInformationForPath(path, err, parseErr);
     if (!metaInfoOpt) {
         DEBUG_FUNCTION_LINE_ERR("Failed to get MetaInformation for path %s", path.c_str());
         return {};
@@ -79,8 +79,8 @@ std::optional<PluginContainer> getPluginForPath(const std::string &path, PluginB
     return PluginContainer(PluginData(dataHandle), std::move(metaInfoOpt.value()));
 }
 
-std::optional<PluginContainer> getPluginForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err) {
-    auto metaInfoOpt = getMetaInformationForBuffer(buffer, size, err);
+std::optional<PluginContainer> getPluginForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err, PluginBackendPluginParseError &parseErr) {
+    auto metaInfoOpt = getMetaInformationForBuffer(buffer, size, err, parseErr);
     if (!metaInfoOpt) {
         DEBUG_FUNCTION_LINE_ERR("Failed to get MetaInformation for buffer %08X (%d bytes)", buffer, size);
         return {};

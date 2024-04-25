@@ -26,15 +26,15 @@ const char *GetStatusStr(PluginBackendApiErrorType err);
 
 namespace PluginUtils {
 
-std::optional<PluginMetaInformation> getMetaInformationForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err);
+std::optional<PluginMetaInformation> getMetaInformationForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err, PluginBackendPluginParseError &parseErr);
 
-std::optional<PluginMetaInformation> getMetaInformationForPath(const std::string &path, PluginBackendApiErrorType &err);
+std::optional<PluginMetaInformation> getMetaInformationForPath(const std::string &path, PluginBackendApiErrorType &err, PluginBackendPluginParseError &parseErr);
 
 std::vector<PluginContainer> getLoadedPlugins(PluginBackendApiErrorType &err);
 
-std::optional<PluginContainer> getPluginForPath(const std::string &path, PluginBackendApiErrorType &err);
+std::optional<PluginContainer> getPluginForPath(const std::string &path, PluginBackendApiErrorType &err, PluginBackendPluginParseError &parseErr);
 
-std::optional<PluginContainer> getPluginForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err);
+std::optional<PluginContainer> getPluginForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err, PluginBackendPluginParseError &parseErr);
 
 PluginBackendApiErrorType LoadAndLinkOnRestart(const std::vector<PluginContainer> &plugins);
 
