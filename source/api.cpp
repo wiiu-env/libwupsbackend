@@ -14,11 +14,18 @@ static PluginBackendApiErrorType (*sWUPSGetSectionInformationForPlugin)(
         uint32_t buffer_size,
         uint32_t *out_count) = nullptr;
 
-static PluginBackendApiErrorType (*sWUPSGetNumberOfLoadedPlugins)(uint32_t *out)       = nullptr;
-static PluginBackendApiErrorType (*sWUPSWillReloadPluginsOnNextLaunch)(bool *out)      = nullptr;
+static PluginBackendApiErrorType (*sWUPSGetNumberOfLoadedPlugins)(uint32_t *out)                                = nullptr;
+static PluginBackendApiErrorType (*sWUPSWillReloadPluginsOnNextLaunch)(bool *out)                               = nullptr;
 static PluginBackendApiErrorType (*sWUPSGetSectionMemoryAddresses)(wups_backend_plugin_container_handle handle,
                                                                    void **textAddress,
-                                                                   void **dataAddress) = nullptr;
+                                                                   void **dataAddress)                          = nullptr;
+static PluginBackendApiErrorType (*sWUPSGetPluginMetaInformationByPathEx)(wups_backend_plugin_information *output,
+                                                                          const char *path,
+                                                                          PluginBackendPluginParseError *err)   = nullptr;
+static PluginBackendApiErrorType (*sWUPSGetPluginMetaInformationByBufferEx)(wups_backend_plugin_information *output,
+                                                                            char *buffer,
+                                                                            size_t size,
+                                                                            PluginBackendPluginParseError *err) = nullptr;
 
 static bool sLibInitDone = false;
 
@@ -79,6 +86,16 @@ PluginBackendApiErrorType WUPSBackend_InitLibrary() {
     if (OSDynLoad_FindExport(sModuleHandle, OS_DYNLOAD_EXPORT_FUNC, "WUPSGetSectionMemoryAddresses", (void **) &sWUPSGetSectionMemoryAddresses) != OS_DYNLOAD_OK) {
         DEBUG_FUNCTION_LINE_WARN("FindExport WUPSGetSectionMemoryAddresses failed.");
         sWUPSGetSectionMemoryAddresses = nullptr;
+    }
+
+    if (OSDynLoad_FindExport(sModuleHandle, OS_DYNLOAD_EXPORT_FUNC, "WUPSGetPluginMetaInformationByPathEx", (void **) &sWUPSGetPluginMetaInformationByPathEx) != OS_DYNLOAD_OK) {
+        DEBUG_FUNCTION_LINE_WARN("FindExport WUPSGetPluginMetaInformationByPathEx failed.");
+        sWUPSGetPluginMetaInformationByPathEx = nullptr;
+    }
+
+    if (OSDynLoad_FindExport(sModuleHandle, OS_DYNLOAD_EXPORT_FUNC, "WUPSGetPluginMetaInformationByBufferEx", (void **) &sWUPSGetPluginMetaInformationByBufferEx) != OS_DYNLOAD_OK) {
+        DEBUG_FUNCTION_LINE_WARN("FindExport WUPSGetPluginMetaInformationByBufferEx failed.");
+        sWUPSGetPluginMetaInformationByBufferEx = nullptr;
     }
 
     auto res = WUPSBackend_GetApiVersion(&sWUPSAPIVersion);
@@ -204,14 +221,39 @@ PluginBackendApiErrorType WUPSBackend_LoadPluginAsDataByBuffer(wups_backend_plug
     return WUPSLoadPluginAsDataByBuffer(output, buffer, size);
 }
 
-PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByPath(wups_backend_plugin_information *output, const char *path) {
-    PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
-    return WUPSGetPluginMetaInformationByPath(output, path);
+PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByPath(wups_backend_plugin_information *output, const char *path, PluginBackendPluginParseError *err) {
+    if (sWUPSAPIVersion == WUPS_BACKEND_MODULE_API_VERSION_ERROR || sWUPSGetPluginMetaInformationByPathEx == nullptr || sWUPSAPIVersion < 3) {
+        PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
+        auto res = WUPSGetPluginMetaInformationByPath(output, path);
+        if (err) {
+            *err = res == PLUGIN_BACKEND_API_ERROR_NONE ? PLUGIN_BACKEND_PLUGIN_PARSE_ERROR_NONE : PLUGIN_BACKEND_PLUGIN_PARSE_ERROR_UNKNOWN;
+        }
+        return res;
+    }
+
+    if (output == nullptr || path == nullptr) {
+        return PLUGIN_BACKEND_API_ERROR_INVALID_ARG;
+    }
+
+    return reinterpret_cast<decltype(&WUPSBackend_GetPluginMetaInformationByPath)>(sWUPSGetPluginMetaInformationByPathEx)(output, path, err);
 }
 
-PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByBuffer(wups_backend_plugin_information *output, char *buffer, size_t size) {
-    PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
-    return WUPSGetPluginMetaInformationByBuffer(output, buffer, size);
+PluginBackendApiErrorType WUPSBackend_GetPluginMetaInformationByBuffer(wups_backend_plugin_information *output, char *buffer, size_t size, PluginBackendPluginParseError *err) {
+    if (sWUPSAPIVersion == WUPS_BACKEND_MODULE_API_VERSION_ERROR || sWUPSGetPluginMetaInformationByBufferEx == nullptr || sWUPSAPIVersion < 3) {
+        PRINT_WARNING_FOR_LEGACY_FUNCTION_WHEN_NOT_INITIALIZED();
+
+        auto res = WUPSGetPluginMetaInformationByBuffer(output, buffer, size);
+        if (err) {
+            *err = res == PLUGIN_BACKEND_API_ERROR_NONE ? PLUGIN_BACKEND_PLUGIN_PARSE_ERROR_NONE : PLUGIN_BACKEND_PLUGIN_PARSE_ERROR_UNKNOWN;
+        }
+        return res;
+    }
+
+    if (output == nullptr || buffer == nullptr || size == 0) {
+        return PLUGIN_BACKEND_API_ERROR_INVALID_ARG;
+    }
+
+    return reinterpret_cast<decltype(&WUPSBackend_GetPluginMetaInformationByBuffer)>(sWUPSGetPluginMetaInformationByBufferEx)(output, buffer, size, err);
 }
 
 PluginBackendApiErrorType WUPSBackend_GetPluginDataForContainerHandles(const wups_backend_plugin_container_handle *plugin_container_handle_list, const wups_backend_plugin_data_handle *plugin_data_list, uint32_t buffer_size) {
