@@ -48,7 +48,7 @@ static std::optional<PluginMetaInformation> getMetaInformation(const wups_backen
 std::optional<PluginMetaInformation> getMetaInformationForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err, PluginBackendPluginParseError &parseErr) {
     wups_backend_plugin_information info = {};
     if ((err = WUPSBackend_GetPluginMetaInformationByBuffer(&info, buffer, size, &parseErr)) != PLUGIN_BACKEND_API_ERROR_NONE) {
-        DEBUG_FUNCTION_LINE_ERR("Failed to load meta infos for buffer %08X with size %08X", buffer, size);
+        DEBUG_FUNCTION_LINE_ERR("Failed to load meta infos for buffer %p with size %08X", buffer, size);
         return {};
     }
     return getMetaInformation(info, err);
@@ -82,13 +82,13 @@ std::optional<PluginContainer> getPluginForPath(const std::string &path, PluginB
 std::optional<PluginContainer> getPluginForBuffer(char *buffer, size_t size, PluginBackendApiErrorType &err, PluginBackendPluginParseError &parseErr) {
     auto metaInfoOpt = getMetaInformationForBuffer(buffer, size, err, parseErr);
     if (!metaInfoOpt) {
-        DEBUG_FUNCTION_LINE_ERR("Failed to get MetaInformation for buffer %08X (%d bytes)", buffer, size);
+        DEBUG_FUNCTION_LINE_ERR("Failed to get MetaInformation for buffer %p (%d bytes)", buffer, size);
         return {};
     }
 
     wups_backend_plugin_data_handle dataHandle;
     if ((err = WUPSBackend_LoadPluginAsDataByBuffer(&dataHandle, buffer, size)) != PLUGIN_BACKEND_API_ERROR_NONE) {
-        DEBUG_FUNCTION_LINE_ERR("WUPSLoadPluginAsDataByBuffer failed for buffer %08X (%d bytes)", buffer, size);
+        DEBUG_FUNCTION_LINE_ERR("WUPSLoadPluginAsDataByBuffer failed for buffer %p (%d bytes)", buffer, size);
         return {};
     }
 
